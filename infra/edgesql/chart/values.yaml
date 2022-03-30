@@ -1,0 +1,42 @@
+### Global Values
+global: {}
+
+podSecurityContext:
+  runAsUser: 1000
+  fsGroup: 1000
+
+pvc:
+  data: edge-sql-pvc
+  storageClass: ase-node-local
+  storageSize: 2Gi
+
+### Sub Chart Specific Values ###
+# SQL DB
+sqldb:
+  fullnameOverride: "edgesql"
+  image:
+    repository: "ecr.ase-usgva-p21.missionready.local:31001/mcr.microsoft.com/azure-sql-edge"
+    tag: "1.0.5"
+    pullPolicy: "IfNotPresent"
+  imagePullSecrets:
+    name: "ase-ecr-credentials"
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "125m"
+    limits:
+      memory: "10Gi"
+      cpu: "1000m"
+
+  service:
+    type: ClusterIP
+    port: 1433
+  database:
+    accept_eula: "Y"
+    mssql_agent_enabled: "TRUE"
+    mssql_collation: "SQL_Latin1_General_CP1_CI_AS"
+    mssql_lcid: "1033"
+    mssql_pid: "Developer"
+    sa_password: "vmuTaXjX5QMQTT=="
+  pvc:
+    name: "edge-sql-pvc"
