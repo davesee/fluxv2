@@ -28,8 +28,6 @@ spec:
             claimName: {{ .Values.sqldb.pvc.name }}
       containers:
         - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
           image: "{{ .Values.sqldb.image.repository }}:{{ .Values.sqldb.image.tag }}"
           imagePullPolicy: {{ .Values.sqldb.image.pullPolicy }}
           resources:
@@ -62,8 +60,6 @@ spec:
           volumeMounts:
             - name: sqldata
               mountPath: /var/opt/mssql
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

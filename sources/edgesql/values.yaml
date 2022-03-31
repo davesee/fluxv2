@@ -1,6 +1,8 @@
 ### Global Values
 global: {}
 
+replicaCount: 2
+
 podSecurityContext:
   runAsUser: 1000
   fsGroup: 1000

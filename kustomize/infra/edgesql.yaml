@@ -56,7 +56,7 @@ metadata:
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
 spec:
-  replicas: 
+  replicas: 2
   selector:
     matchLabels:
       app.kubernetes.io/name: sqldb
@@ -78,8 +78,6 @@ spec:
             claimName: edgesql-pvc
       containers:
         - name: sqldb
-          securityContext:
-            null
           image: "ecr.ase-usgva-p21.missionready.local:31001/mcr.microsoft.com/azure-sql-edge:1.0.5"
           imagePullPolicy: IfNotPresent
           resources:
@@ -112,5 +110,3 @@ spec:
           volumeMounts:
             - name: sqldata
               mountPath: /var/opt/mssql
-          resources:
-            null
