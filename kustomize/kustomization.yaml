@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - infra/rabbitmq.yaml
+  - infra/edgesql.yaml

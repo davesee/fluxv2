@@ -7,7 +7,7 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
@@ -22,13 +22,13 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
-  rabbitmq-erlang-cookie: "c3Uzc0tudjN6STJUTElTM01nWm8ySjlPWThvMnFGS3A="
+  rabbitmq-erlang-cookie: "MUtaczdHVFdUOVZXTklBQUp2TEtZVGpUYjhseThUcFE="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -38,7 +38,7 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 data:
@@ -70,7 +70,7 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 rules:
@@ -89,7 +89,7 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 subjects:
@@ -108,7 +108,7 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -129,6 +129,7 @@ spec:
   selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: RELEASE-NAME
+  publishNotReadyAddresses: true
 ---
 # Source: rabbitmq/templates/svc.yaml
 apiVersion: v1
@@ -138,7 +139,7 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -172,7 +173,7 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -189,12 +190,12 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.24.2
+        helm.sh/chart: rabbitmq-8.29.3
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: 5f3b16bf42c4ee9de5046c17d8273c5ec9282dd004af56359c0d648bec678838
-        checksum/secret: 7a13077f32be93175ae038e07398cf6131fdcadbc08d525b249e579e9467fad6
+        checksum/config: b7465fb1d6ecd9350c529067f1575660d066a20831c31f28286e15a6e9431cac
+        checksum/secret: 3159bd18418527c9d89f7d128ce9edbcc91e0c68058f387040be966770e52f5d
     spec:
       
       imagePullSecrets:
