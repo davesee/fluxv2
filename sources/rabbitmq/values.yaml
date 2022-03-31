@@ -14,7 +14,7 @@ global:
   ##   - myRegistryKeySecretName
   ##
   imagePullSecrets:
-    name: "ase-ecr-credentials"
+    - name: "ase-ecr-credentials"
   storageClass: ase-node-local
 
 ## @section RabbitMQ Image parameters
@@ -55,11 +55,11 @@ image:
 
 ## @param nameOverride String to partially override rabbitmq.fullname template (will maintain the release name)
 ##
-nameOverride: ""
+nameOverride: "phoenix-rabbit-mq"
 
 ## @param fullnameOverride String to fully override rabbitmq.fullname template
 ##
-fullnameOverride: ""
+fullnameOverride: "phoenix-rabbit-mq-fn"
 
 ## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
 ##
