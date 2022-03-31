@@ -3,41 +3,41 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: phoenix-rabbit-mq-fn
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
 secrets:
-  - name: phoenix-rabbit-mq-fn
+  - name: rabbitmq-stage
 ---
 # Source: rabbitmq/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: phoenix-rabbit-mq-fn
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
-  rabbitmq-erlang-cookie: "eGhTOVFyaDdPOU5NQTEwVldkcjBxTUNxcnp3V1AycnA="
+  rabbitmq-erlang-cookie: "MUNscjB4dVM0VnJFUGFFY3hGMTk4NzFBVFV5WFFWc1o="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: phoenix-rabbit-mq-fn-config
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage-config
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
@@ -58,7 +58,7 @@ data:
     queue_master_locator = min-masters
     # enable guest user
     loopback_users.guest = false
-    #default_vhost = phoenix-infra-vhost
+    #default_vhost = phoenix-stage-vhost
     #disk_free_limit.absolute = 50MB
     #load_definitions = /app/load_definition.json
 ---
@@ -66,10 +66,10 @@ data:
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: phoenix-rabbit-mq-fn-endpoint-reader
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage-endpoint-reader
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
@@ -85,29 +85,29 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: phoenix-rabbit-mq-fn-endpoint-reader
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage-endpoint-reader
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 subjects:
   - kind: ServiceAccount
-    name: phoenix-rabbit-mq-fn
+    name: rabbitmq-stage
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: phoenix-rabbit-mq-fn-endpoint-reader
+  name: rabbitmq-stage-endpoint-reader
 ---
 # Source: rabbitmq/templates/svc-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: phoenix-rabbit-mq-fn-headless
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage-headless
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
@@ -127,17 +127,17 @@ spec:
       port: 15672
       targetPort: stats
   selector: 
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: RELEASE-NAME
 ---
 # Source: rabbitmq/templates/svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: phoenix-rabbit-mq-fn
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
@@ -161,45 +161,45 @@ spec:
       targetPort: stats
       nodePort: null
   selector: 
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: RELEASE-NAME
 ---
 # Source: rabbitmq/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: phoenix-rabbit-mq-fn
-  namespace: "phoenix-infra"
+  name: rabbitmq-stage
+  namespace: "phoenix-stage"
   labels:
-    app.kubernetes.io/name: phoenix-rabbit-mq
+    app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
     app.kubernetes.io/instance: RELEASE-NAME
     app.kubernetes.io/managed-by: Helm
 spec:
-  serviceName: phoenix-rabbit-mq-fn-headless
+  serviceName: rabbitmq-stage-headless
   podManagementPolicy: OrderedReady
   replicas: 1
   updateStrategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      app.kubernetes.io/name: phoenix-rabbit-mq
+      app.kubernetes.io/name: rabbitmq
       app.kubernetes.io/instance: RELEASE-NAME
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: phoenix-rabbit-mq
+        app.kubernetes.io/name: rabbitmq
         helm.sh/chart: rabbitmq-8.24.2
         app.kubernetes.io/instance: RELEASE-NAME
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: 7d28118c979c891d7e891a3c494ec21e609cd3698b6b809f4d9d82dd8b8f9424
-        checksum/secret: 3b9e1fe32d54a604e5623088edf9cbc0214c28a604de86a7c6f40564962a03ac
+        checksum/config: 5f3b16bf42c4ee9de5046c17d8273c5ec9282dd004af56359c0d648bec678838
+        checksum/secret: ccf6b070b8445948cde0ec0bfc2d5a17c2ae44ce6d6cadc3a8714ae2c35df4e4
     spec:
       
       imagePullSecrets:
         - name: map[name:ase-ecr-credentials]
-      serviceAccountName: phoenix-rabbit-mq-fn
+      serviceAccountName: rabbitmq-stage
       affinity:
         podAffinity:
           
@@ -208,10 +208,10 @@ spec:
             - podAffinityTerm:
                 labelSelector:
                   matchLabels:
-                    app.kubernetes.io/name: phoenix-rabbit-mq
+                    app.kubernetes.io/name: rabbitmq
                     app.kubernetes.io/instance: RELEASE-NAME
                 namespaces:
-                  - "phoenix-infra"
+                  - "phoenix-stage"
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
@@ -240,7 +240,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: K8S_SERVICE_NAME
-              value: "phoenix-rabbit-mq-fn-headless"
+              value: "rabbitmq-stage-headless"
             - name: K8S_ADDRESS_TYPE
               value: hostname
             - name: RABBITMQ_FORCE_BOOT
@@ -262,7 +262,7 @@ spec:
             - name: RABBITMQ_ERL_COOKIE
               valueFrom:
                 secretKeyRef:
-                  name: phoenix-rabbit-mq-fn
+                  name: rabbitmq-stage
                   key: rabbitmq-erlang-cookie
             - name: RABBITMQ_LOAD_DEFINITIONS
               value: "no"
@@ -273,7 +273,7 @@ spec:
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: phoenix-rabbit-mq-fn
+                  name: rabbitmq-stage
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
               value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
@@ -331,7 +331,7 @@ spec:
       volumes:
         - name: configuration
           configMap:
-            name: phoenix-rabbit-mq-fn-config
+            name: rabbitmq-stage-config
             items:
               - key: rabbitmq.conf
                 path: rabbitmq.conf
@@ -339,7 +339,7 @@ spec:
     - metadata:
         name: data
         labels:
-          app.kubernetes.io/name: phoenix-rabbit-mq
+          app.kubernetes.io/name: rabbitmq
           app.kubernetes.io/instance: RELEASE-NAME
       spec:
         accessModes:
