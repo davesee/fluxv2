@@ -5,8 +5,10 @@ podSecurityContext:
   runAsUser: 1000
   fsGroup: 1000
 
+pwd:
+  value: "vmuTaXjX5QMQTT=="
+
 pvc:
-  data: edge-sql-pvc
   storageClass: ase-node-local
   storageSize: 2Gi
 
@@ -27,7 +29,6 @@ sqldb:
     limits:
       memory: "10Gi"
       cpu: "1000m"
-
   service:
     type: ClusterIP
     port: 1433
@@ -37,6 +38,6 @@ sqldb:
     mssql_collation: "SQL_Latin1_General_CP1_CI_AS"
     mssql_lcid: "1033"
     mssql_pid: "Developer"
-    sa_password: "vmuTaXjX5QMQTT=="
+    sa_password: "edgesql-secret"
   pvc:
-    name: "edge-sql-pvc"
+    name: "edgesql-pvc"
