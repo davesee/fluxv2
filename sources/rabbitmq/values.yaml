@@ -13,8 +13,7 @@ global:
   ## imagePullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  imagePullSecrets:
-    - name: "ase-ecr-credentials"
+  imagePullSecrets: []
   storageClass: ase-node-local
 
 ## @section RabbitMQ Image parameters
@@ -49,7 +48,8 @@ image:
   ## pullSecrets:
   ##   - myRegistryKeySecretName
   ##
-  pullSecrets: []
+  pullSecrets:
+    - ase-ecr-credentials
 
 ## @section Common parameters
 

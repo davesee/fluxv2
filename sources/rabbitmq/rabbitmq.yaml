@@ -28,7 +28,7 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
-  rabbitmq-erlang-cookie: "MTV5Y3l0dHI3UTA5dkhJNVhnU1B1TTBZRVp4dUVUb0U="
+  rabbitmq-erlang-cookie: "c3Uzc0tudjN6STJUTElTM01nWm8ySjlPWThvMnFGS3A="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -194,11 +194,11 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: 5f3b16bf42c4ee9de5046c17d8273c5ec9282dd004af56359c0d648bec678838
-        checksum/secret: 39f74ce2194eded4afd8b8baacca69b6847fa49f616ba493e8b05fdc87c5bab2
+        checksum/secret: 7a13077f32be93175ae038e07398cf6131fdcadbc08d525b249e579e9467fad6
     spec:
       
       imagePullSecrets:
-        - name: map[name:ase-ecr-credentials]
+        - name: ase-ecr-credentials
       serviceAccountName: rabbitmq-stage
       affinity:
         podAffinity:
