@@ -6,7 +6,7 @@ podSecurityContext:
   fsGroup: 1000
 
 pwd:
-  value: "vmuTaXjX5QMQTT=="
+  value: "dummy=vmuTaXjX5QMQTT=="
 
 pvc:
   storageClass: ase-node-local
