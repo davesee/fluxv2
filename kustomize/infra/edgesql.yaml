@@ -1,9 +1,17 @@
 ---
+# Source: sqldb/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: edgesql-secret
+data:
+  SA_PASSWORD: vmuTaXjX5QMQTT==
+---
 # Source: sqldb/templates/pvc-edge-sql.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: edge-sql-pvc
+  name: edgesql-pvc
 spec:
   storageClassName: ase-node-local
   accessModes:
@@ -67,7 +75,7 @@ spec:
       volumes:
         - name: sqldata
           persistentVolumeClaim:
-            claimName: edge-sql-pvc
+            claimName: edgesql-pvc
       containers:
         - name: sqldb
           securityContext:
@@ -93,7 +101,7 @@ spec:
             - name: SA_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: vmuTaXjX5QMQTT==
+                  name: edgesql-secret
                   key: SA_PASSWORD
             - name: MSSQL_AGENT_ENABLED
               value: "TRUE"
