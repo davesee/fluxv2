@@ -1,7 +1,7 @@
 ### Global Values
 global: {}
 
-replicaCount: 2
+replicaCount: 1
 
 podSecurityContext:
   runAsUser: 1000
