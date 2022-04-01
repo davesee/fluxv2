@@ -13,8 +13,8 @@ metadata:
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
 data:
-  SA_PASSWORD: "dm11VGFYalg1UU1RVFQ9PQ=="
-  edgesql-password: "dm11VGFYalg1UU1RVFQ9PQ=="
+  SA_PASSWORD: vmuTaXjX5QMQTT==
+  edgesql-password: vmuTaXjX5QMQTT==
   edgesql-username: sa
   edgesql-hostname: edgesql-service
 ---
