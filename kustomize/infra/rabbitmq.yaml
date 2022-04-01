@@ -28,7 +28,7 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
-  rabbitmq-erlang-cookie: "aFZGeDVvelk0M3g3TUVBV2xFYk40bEx2RndPS0x2UjA="
+  rabbitmq-erlang-cookie: "MGpxVUZ1T0tXNHpNQzVoZkZ2NkJPdVBRNDRPYXd4UG0="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -195,7 +195,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: b7465fb1d6ecd9350c529067f1575660d066a20831c31f28286e15a6e9431cac
-        checksum/secret: cbc66280830a5bd5d75f28485fcbfa0cc903349be3e148c81e00a82dfcd10bc0
+        checksum/secret: 8dec908af244fe6504c257322549b88f3ee7b02c5a92c7cfcbff4fd1c86b8b5c
     spec:
       
       imagePullSecrets:

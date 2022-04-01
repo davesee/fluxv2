@@ -2,6 +2,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: {{ .Values.sqldb.fullnameOverride }}-pvc
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "sqldb.labels" . | nindent 4 }}
 spec:
   storageClassName: {{ .Values.pvc.storageClass }}
   accessModes:
