@@ -12,9 +12,10 @@ metadata:
     app.kubernetes.io/instance: stage
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
+type: Opaque
 data:
-  SA_PASSWORD: vmuTaXjX5QMQTT==
-  edgesql-password: vmuTaXjX5QMQTT==
+  SA_PASSWORD: "dm11VGFYalg1UU1RVFQ9PQ=="
+  edgesql-password: "dm11VGFYalg1UU1RVFQ9PQ=="
   edgesql-username: sa
   edgesql-hostname: edgesql-service
 ---
