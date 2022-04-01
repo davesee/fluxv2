@@ -59,7 +59,7 @@ nameOverride: ""
 
 ## @param fullnameOverride String to fully override rabbitmq.fullname template
 ##
-fullnameOverride: "rabbitmq-stage"
+fullnameOverride: "rabbitmq"
 
 ## @param kubeVersion Force target Kubernetes version (using Helm capabilities if not set)
 ##
