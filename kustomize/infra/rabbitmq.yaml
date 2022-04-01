@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: rabbitmq-stage
+  name: rabbitmq
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -12,13 +12,13 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
 secrets:
-  - name: rabbitmq-stage
+  - name: rabbitmq
 ---
 # Source: rabbitmq/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: rabbitmq-stage
+  name: rabbitmq
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -28,13 +28,13 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
-  rabbitmq-erlang-cookie: "b3lFRjdYVDBxRUdQQ0xuSDBjeXpXeHc1eHprVEozdks="
+  rabbitmq-erlang-cookie: "cDRlS05TNFdjOHFneU5oSzRJazJYT0hjdjJGT1NkcmQ="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: rabbitmq-stage-config
+  name: rabbitmq-config
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -66,7 +66,7 @@ data:
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: rabbitmq-stage-endpoint-reader
+  name: rabbitmq-endpoint-reader
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -85,7 +85,7 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: rabbitmq-stage-endpoint-reader
+  name: rabbitmq-endpoint-reader
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -94,17 +94,17 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 subjects:
   - kind: ServiceAccount
-    name: rabbitmq-stage
+    name: rabbitmq
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: rabbitmq-stage-endpoint-reader
+  name: rabbitmq-endpoint-reader
 ---
 # Source: rabbitmq/templates/svc-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq-stage-headless
+  name: rabbitmq-headless
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -135,7 +135,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq-stage
+  name: rabbitmq
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -169,7 +169,7 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: rabbitmq-stage
+  name: rabbitmq
   namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
@@ -177,7 +177,7 @@ metadata:
     app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 spec:
-  serviceName: rabbitmq-stage-headless
+  serviceName: rabbitmq-headless
   podManagementPolicy: OrderedReady
   replicas: 1
   updateStrategy:
@@ -194,13 +194,13 @@ spec:
         app.kubernetes.io/instance: stage
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: f9c7115fc33b188db2f80c0b6c69c859fdf018890661a317e4e9f2a86af868ce
-        checksum/secret: 8c9bf46b27c1a1f2139ec926db150c8c7980e7b4a758cf9fdcc7aa8f3a44d1bf
+        checksum/config: cec4b9a310e88fa014cd2d28564a2764f57bb35e21f6e20178e393559af6e460
+        checksum/secret: 20c63b81363af6cc6165c76f0451e0adbd66f4fcd0bcc7f10ca4bd9bfe66bd94
     spec:
       
       imagePullSecrets:
         - name: ase-ecr-credentials
-      serviceAccountName: rabbitmq-stage
+      serviceAccountName: rabbitmq
       affinity:
         podAffinity:
           
@@ -241,7 +241,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: K8S_SERVICE_NAME
-              value: "rabbitmq-stage-headless"
+              value: "rabbitmq-headless"
             - name: K8S_ADDRESS_TYPE
               value: hostname
             - name: RABBITMQ_FORCE_BOOT
@@ -263,7 +263,7 @@ spec:
             - name: RABBITMQ_ERL_COOKIE
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq-stage
+                  name: rabbitmq
                   key: rabbitmq-erlang-cookie
             - name: RABBITMQ_LOAD_DEFINITIONS
               value: "no"
@@ -274,7 +274,7 @@ spec:
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq-stage
+                  name: rabbitmq
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
               value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
@@ -332,7 +332,7 @@ spec:
       volumes:
         - name: configuration
           configMap:
-            name: rabbitmq-stage-config
+            name: rabbitmq-config
             items:
               - key: rabbitmq.conf
                 path: rabbitmq.conf
