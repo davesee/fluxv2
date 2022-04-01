@@ -8,7 +8,7 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
 secrets:
@@ -23,12 +23,12 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
-  rabbitmq-erlang-cookie: "MGpxVUZ1T0tXNHpNQzVoZkZ2NkJPdVBRNDRPYXd4UG0="
+  rabbitmq-erlang-cookie: "VDYwTEFua24wemJtSXNDWWpsbWI2NWRFaFhYVGh1WDE="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -39,7 +39,7 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 data:
   rabbitmq.conf: |-
@@ -71,7 +71,7 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups: [""]
@@ -90,7 +90,7 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 subjects:
   - kind: ServiceAccount
@@ -109,7 +109,7 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 spec:
   clusterIP: None
@@ -128,7 +128,7 @@ spec:
       targetPort: stats
   selector: 
     app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
   publishNotReadyAddresses: true
 ---
 # Source: rabbitmq/templates/svc.yaml
@@ -140,7 +140,7 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -163,7 +163,7 @@ spec:
       nodePort: null
   selector: 
     app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
 ---
 # Source: rabbitmq/templates/statefulset.yaml
 apiVersion: apps/v1
@@ -174,7 +174,7 @@ metadata:
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
 spec:
   serviceName: rabbitmq-stage-headless
@@ -185,17 +185,17 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: rabbitmq
-      app.kubernetes.io/instance: RELEASE-NAME
+      app.kubernetes.io/instance: stage
   template:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
         helm.sh/chart: rabbitmq-8.29.3
-        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/instance: stage
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: b7465fb1d6ecd9350c529067f1575660d066a20831c31f28286e15a6e9431cac
-        checksum/secret: 8dec908af244fe6504c257322549b88f3ee7b02c5a92c7cfcbff4fd1c86b8b5c
+        checksum/config: f9c7115fc33b188db2f80c0b6c69c859fdf018890661a317e4e9f2a86af868ce
+        checksum/secret: 3233291424a5233dabd2d98344d660ae29935b8dc1aa9bd5d9a45fc0c86b1dc8
     spec:
       
       imagePullSecrets:
@@ -210,7 +210,7 @@ spec:
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/name: rabbitmq
-                    app.kubernetes.io/instance: RELEASE-NAME
+                    app.kubernetes.io/instance: stage
                 namespaces:
                   - "phoenix-stage"
                 topologyKey: kubernetes.io/hostname
@@ -341,7 +341,7 @@ spec:
         name: data
         labels:
           app.kubernetes.io/name: rabbitmq
-          app.kubernetes.io/instance: RELEASE-NAME
+          app.kubernetes.io/instance: stage
       spec:
         accessModes:
           - "ReadWriteOnce"

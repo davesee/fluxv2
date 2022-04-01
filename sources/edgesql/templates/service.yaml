@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: "{{ include "sqldb.fullname" . }}-service"
+  name: {{ .Values.sqldb.fullnameOverride }}-service
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "sqldb.labels" . | nindent 4 }}

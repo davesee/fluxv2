@@ -1,5 +1,5 @@
 ---
-# Source: sqldb/templates/secret.yaml
+# Source: edgesql/templates/secret.yaml
 apiVersion: v1
 kind: Secret
 metadata:
@@ -7,15 +7,15 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage
-    helm.sh/chart: sqldb-0.1.0
-    app.kubernetes.io/name: sqldb
-    app.kubernetes.io/instance: RELEASE-NAME
+    helm.sh/chart: edgesql-0.1.0
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
 data:
   SA_PASSWORD: vmuTaXjX5QMQTT==
 ---
-# Source: sqldb/templates/pvc-edge-sql.yaml
+# Source: edgesql/templates/pvc-edge-sql.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -23,9 +23,9 @@ metadata:
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage
-    helm.sh/chart: sqldb-0.1.0
-    app.kubernetes.io/name: sqldb
-    app.kubernetes.io/instance: RELEASE-NAME
+    helm.sh/chart: edgesql-0.1.0
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -36,17 +36,17 @@ spec:
     requests:
       storage: 2Gi
 ---
-# Source: sqldb/templates/service.yaml
+# Source: edgesql/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: "RELEASE-NAME-sqldb-service"
+  name: edgesql-service
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage
-    helm.sh/chart: sqldb-0.1.0
-    app.kubernetes.io/name: sqldb
-    app.kubernetes.io/instance: RELEASE-NAME
+    helm.sh/chart: edgesql-0.1.0
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -57,33 +57,33 @@ spec:
       targetPort: 1433
       name: sql
   selector:
-    app.kubernetes.io/name: sqldb
-    app.kubernetes.io/instance: RELEASE-NAME
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/instance: stage
 ---
-# Source: sqldb/templates/deployment.yaml
+# Source: edgesql/templates/deployment.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: RELEASE-NAME-sqldb
+  name: stage-edgesql
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage
-    helm.sh/chart: sqldb-0.1.0
-    app.kubernetes.io/name: sqldb
-    app.kubernetes.io/instance: RELEASE-NAME
+    helm.sh/chart: edgesql-0.1.0
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/version: "1.16.0"
     app.kubernetes.io/managed-by: Helm
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app.kubernetes.io/name: sqldb
-      app.kubernetes.io/instance: RELEASE-NAME
+      app.kubernetes.io/name: edgesql
+      app.kubernetes.io/instance: stage
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: sqldb
-        app.kubernetes.io/instance: RELEASE-NAME
+        app.kubernetes.io/name: edgesql
+        app.kubernetes.io/instance: stage
     spec:
       imagePullSecrets:
       - name: ase-ecr-credentials
@@ -95,7 +95,7 @@ spec:
           persistentVolumeClaim:
             claimName: edgesql-pvc
       containers:
-        - name: sqldb
+        - name: edgesql
           image: "ecr.ase-usgva-p21.missionready.local:31001/mcr.microsoft.com/azure-sql-edge:1.0.5"
           imagePullPolicy: IfNotPresent
           resources:
