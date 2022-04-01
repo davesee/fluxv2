@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "sqldb.fullname" . }}
+  name: {{ .Values.sqldb.fullnameOverride }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "sqldb.labels" . | nindent 4 }}

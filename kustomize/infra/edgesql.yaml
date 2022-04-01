@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: edgesql-secret
+  name: edgesql-stage-secret
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage
@@ -17,13 +17,13 @@ stringData:
   SA_PASSWORD: vmuTaXjX5QMQTT==
   edgesql-password: vmuTaXjX5QMQTT==
   edgesql-username: sa
-  edgesql-hostname: edgesql-service
+  edgesql-hostname: edgesql-stage-service
 ---
 # Source: edgesql/templates/pvc-edge-sql.yaml
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: edgesql-pvc
+  name: edgesql-stage-pvc
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage
@@ -44,7 +44,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: edgesql-service
+  name: edgesql-stage-service
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage
@@ -68,7 +68,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: stage-edgesql
+  name: edgesql-stage
   namespace: "phoenix-stage"
   labels:
     namespace: phoenix-stage

@@ -17,7 +17,7 @@ pvc:
 ### Sub Chart Specific Values ###
 # SQL DB
 sqldb:
-  fullnameOverride: "edgesql"
+  fullnameOverride: "edgesql-stage"
   image:
     repository: "ecr.ase-usgva-p21.missionready.local:31001/mcr.microsoft.com/azure-sql-edge"
     tag: "1.0.5"
