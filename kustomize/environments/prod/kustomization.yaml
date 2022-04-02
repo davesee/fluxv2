@@ -5,9 +5,4 @@ bases:
 namespace: phoenix-test
 
 patches:
-  - target:
-      group: apps
-      version: v1
-      kind: StatefulSet
-      name: rabbitmq
-    path: rabbitmq.yaml
+  - rabbitmq.yaml
