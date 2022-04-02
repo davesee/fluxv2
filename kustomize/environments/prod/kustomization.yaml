@@ -5,8 +5,8 @@ namespace: app-test
 
 patches:
   - target:
-      group: rbac.authorization.k8s.io
+      group: apps
       version: v1
-      kind: Role
-      name: rabbitmq-endpoint-reader
+      kind: StatefulSet
+      name: rabbitmq
     path: rabbitmq.yaml

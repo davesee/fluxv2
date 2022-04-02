@@ -1,15 +1,3 @@
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: rabbitmq-endpoint-reader
-rules:
-  - apiGroups: ["DAVE"]
-    resources: ["endpoints"]
-    verbs: ["get"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["create"]
----
 # Source: rabbitmq/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
