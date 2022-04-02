@@ -1,7 +1,7 @@
 bases:
   - ../../bases
 
-namespace: app-test
+namespace: phoenix-stage
 
 patches:
   - target:
