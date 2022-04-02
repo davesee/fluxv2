@@ -2,7 +2,7 @@ bases:
   - namespace.yaml
   - ../../bases
 
-namespace: phoenix-prod
+namespace: phoenix-stage
 
 patches:
   - rabbitmq.yaml
