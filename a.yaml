@@ -1,4 +1,9 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: phoenix-test
+---
+apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
@@ -8,7 +13,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq
-  namespace: app-test
+  namespace: phoenix-test
 secrets:
 - name: rabbitmq
 ---
@@ -21,7 +26,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-endpoint-reader
-  namespace: app-test
+  namespace: phoenix-test
 rules:
 - apiGroups:
   - ""
@@ -45,7 +50,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-endpoint-reader
-  namespace: app-test
+  namespace: phoenix-test
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -53,7 +58,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: rabbitmq
-  namespace: app-test
+  namespace: phoenix-test
 ---
 apiVersion: v1
 data:
@@ -84,7 +89,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-config
-  namespace: app-test
+  namespace: phoenix-test
 ---
 apiVersion: v1
 data:
@@ -98,7 +103,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq
-  namespace: app-test
+  namespace: phoenix-test
 type: Opaque
 ---
 apiVersion: v1
@@ -110,7 +115,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq
-  namespace: app-test
+  namespace: phoenix-test
 spec:
   ports:
   - name: amqp
@@ -143,7 +148,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-headless
-  namespace: app-test
+  namespace: phoenix-test
 spec:
   clusterIP: None
   ports:
@@ -172,7 +177,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
   name: rabbitmq
-  namespace: app-test
+  namespace: phoenix-test
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1

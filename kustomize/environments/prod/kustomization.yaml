@@ -1,7 +1,8 @@
 bases:
+  - namespace.yaml
   - ../../bases
 
-namespace: phoenix-stage
+namespace: phoenix-test
 
 patches:
   - target:
