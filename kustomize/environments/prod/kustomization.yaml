@@ -1,0 +1,12 @@
+bases:
+  - ../../bases
+
+namespace: app-test
+
+patches:
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: Role
+      name: rabbitmq-endpoint-reader
+    path: rabbitmq.yaml

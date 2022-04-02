@@ -40,6 +40,3 @@ sqldb:
     mssql_collation: "SQL_Latin1_General_CP1_CI_AS"
     mssql_lcid: "1033"
     mssql_pid: "Developer"
-    sa_password: "edgesql-secret"
-  pvc:
-    name: "edgesql-pvc"

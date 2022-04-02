@@ -1,180 +1,25 @@
----
-# Source: rabbitmq/templates/serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: rabbitmq
-  namespace: "phoenix-stage"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
-automountServiceAccountToken: true
-secrets:
-  - name: rabbitmq
----
-# Source: rabbitmq/templates/secrets.yaml
-apiVersion: v1
-kind: Secret
-metadata:
-  name: rabbitmq
-  namespace: "phoenix-stage"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
-type: Opaque
-data:
-  rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
-  rabbitmq-erlang-cookie: "cDRlS05TNFdjOHFneU5oSzRJazJYT0hjdjJGT1NkcmQ="
----
-# Source: rabbitmq/templates/configuration.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: rabbitmq-config
-  namespace: "phoenix-stage"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
-data:
-  rabbitmq.conf: |-
-    ## Username and password
-    ##
-    default_user = phoenix
-    default_pass = CHANGEME
-    ## Clustering
-    ##
-    cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
-    cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
-    cluster_formation.node_cleanup.interval = 10
-    cluster_formation.node_cleanup.only_log_warning = true
-    cluster_partition_handling = autoheal
-    # queue master locator
-    queue_master_locator = min-masters
-    # enable guest user
-    loopback_users.guest = false
-    #default_vhost = phoenix-stage-vhost
-    #disk_free_limit.absolute = 50MB
-    #load_definitions = /app/load_definition.json
----
-# Source: rabbitmq/templates/role.yaml
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: rabbitmq-endpoint-reader
-  namespace: "phoenix-stage"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
 rules:
-  - apiGroups: [""]
+  - apiGroups: ["DAVE"]
     resources: ["endpoints"]
     verbs: ["get"]
   - apiGroups: [""]
     resources: ["events"]
     verbs: ["create"]
 ---
-# Source: rabbitmq/templates/rolebinding.yaml
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: rabbitmq-endpoint-reader
-  namespace: "phoenix-stage"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
-subjects:
-  - kind: ServiceAccount
-    name: rabbitmq
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: rabbitmq-endpoint-reader
----
-# Source: rabbitmq/templates/svc-headless.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: rabbitmq-headless
-  namespace: "phoenix-stage"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
-spec:
-  clusterIP: None
-  ports:
-    - name: epmd
-      port: 4369
-      targetPort: epmd
-    - name: amqp
-      port: 5672
-      targetPort: amqp
-    - name: dist
-      port: 25672
-      targetPort: dist
-    - name: http-stats
-      port: 15672
-      targetPort: stats
-  selector: 
-    app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/instance: stage
-  publishNotReadyAddresses: true
----
-# Source: rabbitmq/templates/svc.yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: rabbitmq
-  namespace: "phoenix-stage"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
-spec:
-  type: ClusterIP
-  ports:
-    - name: amqp
-      port: 5672
-      targetPort: amqp
-      nodePort: null
-    - name: epmd
-      port: 4369
-      targetPort: epmd
-      nodePort: null
-    - name: dist
-      port: 25672
-      targetPort: dist
-      nodePort: null
-    - name: http-stats
-      port: 15672
-      targetPort: stats
-      nodePort: null
-  selector: 
-    app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/instance: stage
----
 # Source: rabbitmq/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: rabbitmq
-  namespace: "phoenix-stage"
+  namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
   serviceName: rabbitmq-headless
@@ -185,38 +30,37 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: rabbitmq
-      app.kubernetes.io/instance: stage
+      app.kubernetes.io/instance: rabbitmq
   template:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
         helm.sh/chart: rabbitmq-8.29.3
-        app.kubernetes.io/instance: stage
+        app.kubernetes.io/instance: rabbitmq
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: cec4b9a310e88fa014cd2d28564a2764f57bb35e21f6e20178e393559af6e460
-        checksum/secret: 20c63b81363af6cc6165c76f0451e0adbd66f4fcd0bcc7f10ca4bd9bfe66bd94
+        checksum/config: 194971e02358a2cececea0150ca55d4fe6d32561975994a43ddd0a6cacd8683c
+        checksum/secret: dd7b5ffe2e12c4b7da118f705c68c6d1f6f7d59b6e5324c077c48af664411a3b
     spec:
-      
       imagePullSecrets:
         - name: ase-ecr-credentials
       serviceAccountName: rabbitmq
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/name: rabbitmq
-                    app.kubernetes.io/instance: stage
+                    app.kubernetes.io/instance: rabbitmq
                 namespaces:
-                  - "phoenix-stage"
+                  - "patchme"
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -341,7 +185,7 @@ spec:
         name: data
         labels:
           app.kubernetes.io/name: rabbitmq
-          app.kubernetes.io/instance: stage
+          app.kubernetes.io/instance: rabbitmq
       spec:
         accessModes:
           - "ReadWriteOnce"

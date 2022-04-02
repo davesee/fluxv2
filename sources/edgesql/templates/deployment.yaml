@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.sqldb.fullnameOverride }}
-  namespace: {{ .Release.Namespace | quote }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "sqldb.labels" . | nindent 4 }}
 spec:
@@ -26,7 +26,7 @@ spec:
       volumes:
         - name: sqldata
           persistentVolumeClaim:
-            claimName: {{ .Values.sqldb.pvc.name }}
+            claimName: {{ .Values.sqldb.fullnameOverride }}-pvc
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.sqldb.image.repository }}:{{ .Values.sqldb.image.tag }}"
@@ -50,7 +50,7 @@ spec:
             - name: SA_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.sqldb.database.sa_password }}
+                  name: {{ .Values.sqldb.fullnameOverride }}-secret
                   key: SA_PASSWORD
             - name: MSSQL_AGENT_ENABLED
               value: {{ quote .Values.sqldb.database.mssql_agent_enabled }}

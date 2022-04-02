@@ -1,0 +1,35 @@
+---
+# Source: edgesql/templates/secret.yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: edgesql-secret
+  namespace: "phoenix-stage"
+stringData:
+  SA_PASSWORD: stageXjX5QMQTT==
+  edgesql-password: stageXjX5QMQTT==
+---
+# Source: edgesql/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: edgesql-pvc
+  namespace: "phoenix-stage"
+spec:
+  resources:
+    requests:
+      storage: 2Gi
+---
+# Source: edgesql/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: edgesql-service
+  namespace: "phoenix-stage"
+---
+# Source: edgesql/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: edgesql
+  namespace: "phoenix-stage"
