@@ -3,10 +3,10 @@ automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 secrets:
@@ -16,10 +16,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq-endpoint-reader
   namespace: phoenix-stage
 rules:
@@ -40,10 +40,10 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq-endpoint-reader
   namespace: phoenix-stage
 roleRef:
@@ -60,7 +60,7 @@ data:
   rabbitmq.conf: |-
     ## Username and password
     ##
-    default_user = user
+    default_user = phoenix
     default_pass = CHANGEME
     ## Clustering
     ##
@@ -73,16 +73,16 @@ data:
     queue_master_locator = min-masters
     # enable guest user
     loopback_users.guest = false
-    #default_vhost = patchme-vhost
+    #default_vhost = phoenix-stage-vhost
     #disk_free_limit.absolute = 50MB
     #load_definitions = /app/load_definition.json
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq-config
   namespace: phoenix-stage
 ---
@@ -100,15 +100,15 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  rabbitmq-erlang-cookie: SW5XVUtxU1hwdmQ3VkIzbFlTc1BaZDJoTVd5cWREQjM=
-  rabbitmq-password: NzcyM3NhUEo1Yg==
+  rabbitmq-erlang-cookie: cDRlS05TNFdjOHFneU5oSzRJazJYT0hjdjJGT1NkcmQ=
+  rabbitmq-password: dm11VGFYalg1UU1RVFQ9PQ==
 kind: Secret
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 type: Opaque
@@ -117,10 +117,10 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 spec:
@@ -142,7 +142,7 @@ spec:
     port: 15672
     targetPort: stats
   selector:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/name: rabbitmq
   type: ClusterIP
 ---
@@ -150,10 +150,10 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq-headless
   namespace: phoenix-stage
 spec:
@@ -171,18 +171,19 @@ spec:
   - name: http-stats
     port: 15672
     targetPort: stats
+  publishNotReadyAddresses: true
   selector:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/name: rabbitmq
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 spec:
@@ -190,19 +191,19 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: rabbitmq
+      app.kubernetes.io/instance: stage
       app.kubernetes.io/name: rabbitmq
   serviceName: phoenix-rabbitmq-headless
   template:
     metadata:
       annotations:
-        checksum/config: d5365b3a309149fd623e1c92a287396ec70d4e1cc50ad783d6e10b196fc66737
-        checksum/secret: 3660f6e1ba31d8913cb1dd8053d89c3d7091781e0325506eef7dd8b8a2063b4d
+        checksum/config: cec4b9a310e88fa014cd2d28564a2764f57bb35e21f6e20178e393559af6e460
+        checksum/secret: 20c63b81363af6cc6165c76f0451e0adbd66f4fcd0bcc7f10ca4bd9bfe66bd94
       labels:
-        app.kubernetes.io/instance: rabbitmq
+        app.kubernetes.io/instance: stage
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.24.2
+        helm.sh/chart: rabbitmq-8.29.3
     spec:
       affinity:
         podAntiAffinity:
@@ -210,10 +211,10 @@ spec:
           - podAffinityTerm:
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/instance: rabbitmq
+                  app.kubernetes.io/instance: stage
                   app.kubernetes.io/name: rabbitmq
               namespaces:
-              - patchme
+              - phoenix-stage
               topologyKey: kubernetes.io/hostname
             weight: 1
       containers:
@@ -343,7 +344,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       labels:
-        app.kubernetes.io/instance: rabbitmq
+        app.kubernetes.io/instance: stage
         app.kubernetes.io/name: rabbitmq
       name: data
     spec:
