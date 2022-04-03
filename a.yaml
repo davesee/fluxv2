@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -16,7 +16,7 @@ kind: ServiceAccount
 metadata:
   labels:
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-state-metrics
@@ -33,7 +33,7 @@ metadata:
     chart: prometheus-15.8.0
     component: server
     heritage: Helm
-    release: prometheus
+    release: phoenix-prometheus
   name: phoenix-prometheus-server
   namespace: phoenix-stage
 ---
@@ -42,14 +42,14 @@ automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 secrets:
-- name: rabbitmq
+- name: phoenix-rabbitmq
 ---
 apiVersion: policy/v1beta1
 kind: PodSecurityPolicy
@@ -60,7 +60,7 @@ metadata:
     seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default,runtime/default
     seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -102,7 +102,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -123,7 +123,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
@@ -147,7 +147,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -160,7 +160,7 @@ kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-state-metrics
@@ -370,7 +370,7 @@ metadata:
     chart: prometheus-15.8.0
     component: server
     heritage: Helm
-    release: prometheus
+    release: phoenix-prometheus
   name: phoenix-prometheus-server
 rules:
 - apiGroups:
@@ -407,7 +407,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -427,7 +427,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
@@ -446,7 +446,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -466,7 +466,7 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-state-metrics
@@ -490,7 +490,7 @@ metadata:
     chart: prometheus-15.8.0
     component: server
     heritage: Helm
-    release: prometheus
+    release: phoenix-prometheus
   name: phoenix-prometheus-server
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -518,7 +518,7 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -826,7 +826,7 @@ metadata:
     chart: prometheus-15.8.0
     component: server
     heritage: Helm
-    release: prometheus
+    release: phoenix-prometheus
   name: phoenix-prometheus-server
   namespace: phoenix-stage
 ---
@@ -853,7 +853,7 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
@@ -864,13 +864,13 @@ apiVersion: v1
 kind: Secret
 metadata:
   labels:
-    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/instance: phoenix-edgesql
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: edgesql
     app.kubernetes.io/version: 1.16.0
     helm.sh/chart: edgesql-0.1.0
     namespace: patchme
-  name: phoenix-edgesql-secret
+  name: edgesql-secret
   namespace: phoenix-stage
 stringData:
   SA_PASSWORD: vmuTaXjX5QMQTT==
@@ -881,13 +881,13 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  admin-password: YlVOWXpmcDhEbWJlTllNNGdyTlBKY0NDN3J4NkpyZ0VmbGsyU0NXcA==
+  admin-password: Slc1ODJOdkZjb2JBVldzc1dmdWtiaHEwSUhacVk1d0lXYzJmcmlYYg==
   admin-user: YWRtaW4=
   ldap-toml: ""
 kind: Secret
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -898,12 +898,12 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  rabbitmq-erlang-cookie: R0lzM2tsaU1RU2hHOUt2SVUweTd1TjROVGQ5M3d2T2Y=
-  rabbitmq-password: UUhVTm1hWDRuYw==
+  rabbitmq-erlang-cookie: Q2pTVG93YnRPWktYN2t3bHREUG1KS1pEcVRoelJwME4=
+  rabbitmq-password: a1lTcDRBcWxRTw==
 kind: Secret
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
@@ -915,13 +915,13 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/instance: phoenix-edgesql
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: edgesql
     app.kubernetes.io/version: 1.16.0
     helm.sh/chart: edgesql-0.1.0
     namespace: patchme
-  name: phoenix-edgesql-service
+  name: edgesql-service
   namespace: phoenix-stage
 spec:
   ports:
@@ -930,7 +930,7 @@ spec:
     protocol: TCP
     targetPort: 1433
   selector:
-    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/instance: phoenix-edgesql
     app.kubernetes.io/name: edgesql
   type: ClusterIP
 ---
@@ -938,7 +938,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -952,7 +952,7 @@ spec:
     protocol: TCP
     targetPort: 3000
   selector:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/name: grafana
   type: ClusterIP
 ---
@@ -963,7 +963,7 @@ metadata:
     prometheus.io/scrape: "true"
   labels:
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-state-metrics
@@ -978,7 +978,7 @@ spec:
     protocol: TCP
     targetPort: 8080
   selector:
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/name: kube-state-metrics
   type: ClusterIP
 ---
@@ -990,7 +990,7 @@ metadata:
     chart: prometheus-15.8.0
     component: server
     heritage: Helm
-    release: prometheus
+    release: phoenix-prometheus
   name: phoenix-prometheus-server
   namespace: phoenix-stage
 spec:
@@ -1002,7 +1002,7 @@ spec:
   selector:
     app: prometheus
     component: server
-    release: prometheus
+    release: phoenix-prometheus
   sessionAffinity: None
   type: ClusterIP
 ---
@@ -1010,7 +1010,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
@@ -1035,7 +1035,7 @@ spec:
     port: 15672
     targetPort: stats
   selector:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/name: rabbitmq
   type: ClusterIP
 ---
@@ -1043,7 +1043,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
@@ -1066,20 +1066,20 @@ spec:
     targetPort: stats
   publishNotReadyAddresses: true
   selector:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/name: rabbitmq
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   labels:
-    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/instance: phoenix-edgesql
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: edgesql
     app.kubernetes.io/version: 1.16.0
     helm.sh/chart: edgesql-0.1.0
     namespace: patchme
-  name: phoenix-edgesql-pvc
+  name: edgesql-pvc
   namespace: phoenix-stage
 spec:
   accessModes:
@@ -1097,7 +1097,7 @@ metadata:
     chart: prometheus-15.8.0
     component: server
     heritage: Helm
-    release: prometheus
+    release: phoenix-prometheus
   name: phoenix-prometheus-server
   namespace: phoenix-stage
 spec:
@@ -1111,24 +1111,24 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/instance: phoenix-edgesql
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: edgesql
     app.kubernetes.io/version: 1.16.0
     helm.sh/chart: edgesql-0.1.0
     namespace: patchme
-  name: phoenix-edgesql
+  name: edgesql
   namespace: phoenix-stage
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: edgesql
+      app.kubernetes.io/instance: phoenix-edgesql
       app.kubernetes.io/name: edgesql
   template:
     metadata:
       labels:
-        app.kubernetes.io/instance: edgesql
+        app.kubernetes.io/instance: phoenix-edgesql
         app.kubernetes.io/name: edgesql
     spec:
       containers:
@@ -1141,7 +1141,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: SA_PASSWORD
-              name: phoenix-edgesql-secret
+              name: edgesql-secret
         - name: MSSQL_AGENT_ENABLED
           value: "TRUE"
         - name: MSSQL_COLLATION
@@ -1173,13 +1173,13 @@ spec:
       volumes:
       - name: sqldata
         persistentVolumeClaim:
-          claimName: phoenix-edgesql-pvc
+          claimName: edgesql-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: grafana
     app.kubernetes.io/version: 8.4.2
@@ -1191,19 +1191,19 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: grafana
+      app.kubernetes.io/instance: phoenix-grafana
       app.kubernetes.io/name: grafana
   strategy:
     type: RollingUpdate
   template:
     metadata:
       annotations:
-        checksum/config: 65b172d461a3f1ce10fec656ce903a8d103cccf5928159fc3c9fbfa5e90f45cb
+        checksum/config: 29e71bec037ea0eece29019cc49b2213e556bb33c522152cc20715200c468f23
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 6b0b4ed7f5f9b13eb3436db5f3c6dc46e766f787cbde466c43322b43a1a29ad1
+        checksum/secret: 037a8db0b18ac513ffb5470aec7b714bcc1843ab5335af1098d220d27034ba0d
       labels:
-        app.kubernetes.io/instance: grafana
+        app.kubernetes.io/instance: phoenix-grafana
         app.kubernetes.io/name: grafana
     spec:
       automountServiceAccountToken: true
@@ -1273,7 +1273,7 @@ kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/part-of: kube-state-metrics
@@ -1285,13 +1285,13 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: phoenix-prometheus
       app.kubernetes.io/name: kube-state-metrics
   template:
     metadata:
       labels:
         app.kubernetes.io/component: metrics
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: phoenix-prometheus
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: kube-state-metrics
         app.kubernetes.io/part-of: kube-state-metrics
@@ -1336,7 +1336,7 @@ metadata:
     chart: prometheus-15.8.0
     component: server
     heritage: Helm
-    release: prometheus
+    release: phoenix-prometheus
   name: phoenix-prometheus-server
   namespace: phoenix-stage
 spec:
@@ -1345,7 +1345,7 @@ spec:
     matchLabels:
       app: prometheus
       component: server
-      release: prometheus
+      release: phoenix-prometheus
   template:
     metadata:
       labels:
@@ -1353,7 +1353,7 @@ spec:
         chart: prometheus-15.8.0
         component: server
         heritage: Helm
-        release: prometheus
+        release: phoenix-prometheus
     spec:
       containers:
       - args:
@@ -1428,10 +1428,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
+    helm.sh/chart: rabbitmq-8.31.2
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 spec:
@@ -1439,30 +1439,32 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: stage
+      app.kubernetes.io/instance: phoenix-rabbitmq
       app.kubernetes.io/name: rabbitmq
   serviceName: phoenix-rabbitmq-headless
   template:
     metadata:
       annotations:
-        checksum/config: cec4b9a310e88fa014cd2d28564a2764f57bb35e21f6e20178e393559af6e460
-        checksum/secret: 20c63b81363af6cc6165c76f0451e0adbd66f4fcd0bcc7f10ca4bd9bfe66bd94
+        checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
+        checksum/secret: 13f4d0cab9ea88f781b857ef0bf52666552f071eb24ab2c751ab6cf091357865
       labels:
-        app.kubernetes.io/instance: stage
+        app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.29.3
+        helm.sh/chart: rabbitmq-8.31.2
     spec:
       affinity:
+        nodeAffinity: null
+        podAffinity: null
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - podAffinityTerm:
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/instance: stage
+                  app.kubernetes.io/instance: phoenix-rabbitmq
                   app.kubernetes.io/name: rabbitmq
               namespaces:
-              - phoenix-stage
+              - patchme
               topologyKey: kubernetes.io/hostname
             weight: 1
       containers:
@@ -1482,7 +1484,7 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         - name: K8S_SERVICE_NAME
-          value: rabbitmq-headless
+          value: phoenix-rabbitmq-headless
         - name: K8S_ADDRESS_TYPE
           value: hostname
         - name: RABBITMQ_FORCE_BOOT
@@ -1508,10 +1510,12 @@ spec:
               name: phoenix-rabbitmq
         - name: RABBITMQ_LOAD_DEFINITIONS
           value: "no"
+        - name: RABBITMQ_DEFINITIONS_FILE
+          value: /app/load_definition.json
         - name: RABBITMQ_SECURE_PASSWORD
           value: "yes"
         - name: RABBITMQ_USERNAME
-          value: phoenix
+          value: user
         - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
@@ -1519,9 +1523,7 @@ spec:
               name: phoenix-rabbitmq
         - name: RABBITMQ_PLUGINS
           value: rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap
-        - name: RABBITMQ_DEFINITIONS_FILE
-          value: /app/load_definition.json
-        image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
+        image: docker.io/bitnami/rabbitmq:3.9.14-debian-10-r12
         imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -1575,8 +1577,6 @@ spec:
           name: configuration
         - mountPath: /bitnami/rabbitmq/mnesia
           name: data
-      imagePullSecrets:
-      - name: ase-ecr-credentials
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -1594,7 +1594,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       labels:
-        app.kubernetes.io/instance: stage
+        app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/name: rabbitmq
       name: data
     spec:
@@ -1602,5 +1602,4 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 10Gi
-      storageClassName: ase-node-local
+          storage: 8Gi

@@ -27,8 +27,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "a1lTcDRBcWxRTw=="
-  rabbitmq-erlang-cookie: "Q2pTVG93YnRPWktYN2t3bHREUG1KS1pEcVRoelJwME4="
+  rabbitmq-password: "QUpSYlVLelhFeA=="
+  rabbitmq-erlang-cookie: "RHd5MWpCNEZzVktQa09GTmlQYmxCeGVoR1pTaml1TjA="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -194,7 +194,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
-        checksum/secret: 13f4d0cab9ea88f781b857ef0bf52666552f071eb24ab2c751ab6cf091357865
+        checksum/secret: 8374724c87057ed00d11364da64039878fbea691a51375055c26aeb404a892c9
     spec:
       
       serviceAccountName: phoenix-rabbitmq

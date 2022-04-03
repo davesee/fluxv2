@@ -13,7 +13,7 @@ main() {
     # import_source monitoring kube-state-metrics https://prometheus-community.github.io/helm-charts prometheus-community/kube-state-metrics
 
     # create custom chart yamls
-    helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="$prefix-edgesql" --namespace patchme >./kustomize/bases/infra/edgesql.yaml
+    helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="edgesql" --namespace patchme --set "sqldb.fullnameOverride=$prefix-edgesql" >./kustomize/bases/infra/edgesql.yaml
 }
 
 import_source() {
