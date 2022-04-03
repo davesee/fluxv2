@@ -4,3 +4,6 @@ kind: Kustomization
 resources:
   - infra/rabbitmq.yaml
   - infra/edgesql.yaml
+  - monitoring/kube-state-metrics.yaml
+  - monitoring/prometheus.yaml
+  - monitoring/grafana.yaml
