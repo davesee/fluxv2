@@ -78,7 +78,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "VDhvZk9iZ2k3Rk1IZDNNVWo3WE5oNEJNNG96RHVrdlhpbGJtajN6Mg=="
+  admin-password: "a2Q5SXRYb3VTWlNSbWNxWVkwSXhXaXBGRFVkczZPWElxaW1kWkFhRg=="
   ldap-toml: ""
 ---
 # Source: grafana/templates/configmap.yaml
@@ -192,7 +192,7 @@ metadata:
     app.kubernetes.io/version: "8.4.2"
     app.kubernetes.io/managed-by: Helm
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - name: service
       port: 80
@@ -233,7 +233,7 @@ spec:
         checksum/config: 29e71bec037ea0eece29019cc49b2213e556bb33c522152cc20715200c468f23
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: a69df1712166d132883ab27fbdae384ee0bb68b4184c620ff4fab4e7ab729508
+        checksum/secret: 5da85872f8f48e6be7ff7349d9dfcc76a90d5a4574bf0b7a9c67a18eab1bf366
     spec:
       
       serviceAccountName: phoenix-grafana
