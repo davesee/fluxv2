@@ -7,8 +7,8 @@ namespace: phoenix-stage
 # Affect images across all deployments, does not add ase-ecr-credentials!
 images:
   - name: docker.io/bitnami/rabbitmq
-    newName: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq
-    newTag: 3.9.13-debian-10-r38
+    newName: bitnami/rabbitmq
+    newTag: 3.9.14-management
 
 patches:
   - path: patches/rabbitmq_stateful_set.yaml
