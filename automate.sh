@@ -6,9 +6,9 @@
 main() {
     # create public chart yamls
     import_source infra rabbitmq https://charts.bitnami.com/bitnami bitnami/rabbitmq
-    import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana
-    import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus
-    import_source monitoring kube-state-metrics https://prometheus-community.github.io/helm-charts prometheus-community/kube-state-metrics
+    import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana "testFramework.enabled=false"
+    import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus "nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false"
+    # import_source monitoring kube-state-metrics https://prometheus-community.github.io/helm-charts prometheus-community/kube-state-metrics
 
     # create custom chart yamls
     helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template=edgesql --namespace patchme >./kustomize/bases/infra/edgesql.yaml
@@ -19,6 +19,7 @@ import_source() {
     local name=$2
     local helm_repo=$3
     local chart=$4
+    local vars=$5
 
     # remove previous files
     rm -rf ./sources/$name ./kustomize/bases/$base_type/$name.yaml
@@ -30,10 +31,12 @@ import_source() {
     version=$(ls ./sources/$name)
     silent=$(helm repo remove $name)
 
-    # create the complete chart in one yaml file
-    helm template "./sources/$name/$version" --name-template=$name --namespace patchme >./kustomize/bases/$base_type/$name.yaml
+    if [[ -n $vars ]]; then set_vars="--set $vars"; else set_vars=""; fi
 
-    rm -rf ./sources/$name
+    # create the complete chart in one yaml file
+    helm template "./sources/$name/$version" --name-template="$name" --namespace patchme $set_vars >./kustomize/bases/$base_type/$name.yaml
+
+    # rm -rf ./sources/$name
 }
 
 main

@@ -50,39 +50,6 @@ spec:
         max: 65535
   readOnlyRootFilesystem: false
 ---
-# Source: grafana/templates/tests/test-podsecuritypolicy.yaml
-apiVersion: policy/v1beta1
-kind: PodSecurityPolicy
-metadata:
-  name: grafana-test
-  labels:
-    helm.sh/chart: grafana-6.24.1
-    app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: grafana
-    app.kubernetes.io/version: "8.4.2"
-    app.kubernetes.io/managed-by: Helm
-spec:
-  allowPrivilegeEscalation: true
-  privileged: false
-  hostNetwork: false
-  hostIPC: false
-  hostPID: false
-  fsGroup:
-    rule: RunAsAny
-  seLinux:
-    rule: RunAsAny
-  supplementalGroups:
-    rule: RunAsAny
-  runAsUser:
-    rule: RunAsAny
-  volumes:
-  - configMap
-  - downwardAPI
-  - emptyDir
-  - projected
-  - csi
-  - secret
----
 # Source: grafana/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -94,19 +61,6 @@ metadata:
     app.kubernetes.io/version: "8.4.2"
     app.kubernetes.io/managed-by: Helm
   name: grafana
-  namespace: patchme
----
-# Source: grafana/templates/tests/test-serviceaccount.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  labels:
-    helm.sh/chart: grafana-6.24.1
-    app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: grafana
-    app.kubernetes.io/version: "8.4.2"
-    app.kubernetes.io/managed-by: Helm
-  name: grafana-test
   namespace: patchme
 ---
 # Source: grafana/templates/secret.yaml
@@ -124,7 +78,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "V05zU1BpMW9CYVpuZmF4Y2ZwUFVYUGRuRG1SNGFmWnowTVlnMkc4Ng=="
+  admin-password: "dkRUMlRkT0hPc2V1T2JrVmlWZjJiVTNqOURvMlgzcGZwdkF5ZktTUg=="
   ldap-toml: ""
 ---
 # Source: grafana/templates/configmap.yaml
@@ -152,27 +106,6 @@ data:
     logs = /var/log/grafana
     plugins = /var/lib/grafana/plugins
     provisioning = /etc/grafana/provisioning
----
-# Source: grafana/templates/tests/test-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: grafana-test
-  namespace: patchme
-  labels:
-    helm.sh/chart: grafana-6.24.1
-    app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: grafana
-    app.kubernetes.io/version: "8.4.2"
-    app.kubernetes.io/managed-by: Helm
-data:
-  run.sh: |-
-    @test "Test Health" {
-      url="http://grafana/api/health"
-
-      code=$(wget --server-response --spider --timeout 10 --tries 1 ${url} 2>&1 | awk '/^  HTTP/{print $2}')
-      [ "$code" == "200" ]
-    }
 ---
 # Source: grafana/templates/clusterrole.yaml
 kind: ClusterRole
@@ -225,24 +158,6 @@ rules:
   verbs:          ['use']
   resourceNames:  [grafana]
 ---
-# Source: grafana/templates/tests/test-role.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
-metadata:
-  name: grafana-test
-  namespace: patchme
-  labels:
-    helm.sh/chart: grafana-6.24.1
-    app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: grafana
-    app.kubernetes.io/version: "8.4.2"
-    app.kubernetes.io/managed-by: Helm
-rules:
-- apiGroups:      ['policy']
-  resources:      ['podsecuritypolicies']
-  verbs:          ['use']
-  resourceNames:  [grafana-test]
----
 # Source: grafana/templates/rolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -262,27 +177,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: grafana
-  namespace: patchme
----
-# Source: grafana/templates/tests/test-rolebinding.yaml
-apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
-metadata:
-  name: grafana-test
-  namespace: patchme
-  labels:
-    helm.sh/chart: grafana-6.24.1
-    app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: grafana
-    app.kubernetes.io/version: "8.4.2"
-    app.kubernetes.io/managed-by: Helm
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: grafana-test
-subjects:
-- kind: ServiceAccount
-  name: grafana-test
   namespace: patchme
 ---
 # Source: grafana/templates/service.yaml
@@ -339,7 +233,7 @@ spec:
         checksum/config: 65b172d461a3f1ce10fec656ce903a8d103cccf5928159fc3c9fbfa5e90f45cb
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 0ded8ffb44c1eaa5db102fa42aa1ea3987fb4f28c2e00338242b13e3714f3fdd
+        checksum/secret: ea31156dac6baff9e2282384805aa6496450ab54fdef164d2db9b88e8a7ed686
     spec:
       
       serviceAccountName: grafana
@@ -404,34 +298,3 @@ spec:
             name: grafana
         - name: storage
           emptyDir: {}
----
-# Source: grafana/templates/tests/test.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: grafana-test
-  labels:
-    helm.sh/chart: grafana-6.24.1
-    app.kubernetes.io/name: grafana
-    app.kubernetes.io/instance: grafana
-    app.kubernetes.io/version: "8.4.2"
-    app.kubernetes.io/managed-by: Helm
-  annotations:
-    "helm.sh/hook": test-success
-  namespace: patchme
-spec:
-  serviceAccountName: grafana-test
-  containers:
-    - name: grafana-test
-      image: "bats/bats:v1.4.1"
-      imagePullPolicy: "IfNotPresent"
-      command: ["/opt/bats/bin/bats", "-t", "/tests/run.sh"]
-      volumeMounts:
-        - mountPath: /tests
-          name: tests
-          readOnly: true
-  volumes:
-  - name: tests
-    configMap:
-      name: grafana-test
-  restartPolicy: Never

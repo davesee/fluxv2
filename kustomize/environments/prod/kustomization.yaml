@@ -3,10 +3,7 @@ bases:
   - ../../bases
 
 namespace: phoenix-stage
-# namePrefix: phoenix-
-
-generatorOptions:
-  disableNameSuffixHash: true
+namePrefix: phoenix-
 
 # Affect images across all deployments
 # images:

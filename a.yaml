@@ -1,122 +1,278 @@
 apiVersion: v1
-automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: grafana
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
   namespace: phoenix-stage
-secrets:
-- name: rabbitmq
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-test
+  namespace: phoenix-stage
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  annotations:
+    apparmor.security.beta.kubernetes.io/allowedProfileNames: runtime/default
+    apparmor.security.beta.kubernetes.io/defaultProfileName: runtime/default
+    seccomp.security.alpha.kubernetes.io/allowedProfileNames: docker/default,runtime/default
+    seccomp.security.alpha.kubernetes.io/defaultProfileName: docker/default
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
+spec:
+  allowPrivilegeEscalation: false
+  fsGroup:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  readOnlyRootFilesystem: false
+  requiredDropCapabilities:
+  - ALL
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    ranges:
+    - max: 65535
+      min: 1
+    rule: MustRunAs
+  volumes:
+  - configMap
+  - emptyDir
+  - projected
+  - csi
+  - secret
+  - downwardAPI
+  - persistentVolumeClaim
+---
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-test
+spec:
+  allowPrivilegeEscalation: true
+  fsGroup:
+    rule: RunAsAny
+  hostIPC: false
+  hostNetwork: false
+  hostPID: false
+  privileged: false
+  runAsUser:
+    rule: RunAsAny
+  seLinux:
+    rule: RunAsAny
+  supplementalGroups:
+    rule: RunAsAny
+  volumes:
+  - configMap
+  - downwardAPI
+  - emptyDir
+  - projected
+  - csi
+  - secret
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: grafana
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-endpoint-reader
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
   namespace: phoenix-stage
 rules:
 - apiGroups:
-  - ""
+  - extensions
+  resourceNames:
+  - grafana
   resources:
-  - endpoints
+  - podsecuritypolicies
   verbs:
-  - get
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-test
+  namespace: phoenix-stage
+rules:
 - apiGroups:
-  - ""
+  - policy
+  resourceNames:
+  - grafana-test
   resources:
-  - events
+  - podsecuritypolicies
   verbs:
-  - create
+  - use
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-clusterrole
+rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: grafana
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-endpoint-reader
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
   namespace: phoenix-stage
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: rabbitmq-endpoint-reader
+  name: grafana
 subjects:
 - kind: ServiceAccount
-  name: rabbitmq
+  name: grafana
+  namespace: phoenix-stage
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-test
+  namespace: phoenix-stage
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: grafana-test
+subjects:
+- kind: ServiceAccount
+  name: grafana-test
+  namespace: phoenix-stage
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-clusterrolebinding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: grafana-clusterrole
+subjects:
+- kind: ServiceAccount
+  name: grafana
   namespace: phoenix-stage
 ---
 apiVersion: v1
 data:
-  rabbitmq.conf: |-
-    ## Username and password
-    ##
-    default_user = user
-    default_pass = CHANGEME
-    ## Clustering
-    ##
-    cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
-    cluster_formation.k8s.host = kubernetes.default.svc.cluster.local
-    cluster_formation.node_cleanup.interval = 10
-    cluster_formation.node_cleanup.only_log_warning = true
-    cluster_partition_handling = autoheal
-    # queue master locator
-    queue_master_locator = min-masters
-    # enable guest user
-    loopback_users.guest = false
-    #default_vhost = patchme-vhost
-    #disk_free_limit.absolute = 50MB
-    #load_definitions = /app/load_definition.json
+  grafana.ini: |
+    [analytics]
+    check_for_updates = true
+    [grafana_net]
+    url = https://grafana.net
+    [log]
+    mode = console
+    [paths]
+    data = /var/lib/grafana/
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /etc/grafana/provisioning
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: grafana
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-config
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
   namespace: phoenix-stage
----
-apiVersion: v1
-kind: Secret
-metadata:
-  labels:
-    app.kubernetes.io/instance: edgesql
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: edgesql
-    app.kubernetes.io/version: 1.16.0
-    helm.sh/chart: edgesql-0.1.0
-    namespace: patchme
-  name: edgesql-secret
-  namespace: phoenix-stage
-stringData:
-  SA_PASSWORD: vmuTaXjX5QMQTT==
-  edgesql-hostname: edgesql-service
-  edgesql-password: vmuTaXjX5QMQTT==
-  edgesql-username: sa
-type: Opaque
 ---
 apiVersion: v1
 data:
-  rabbitmq-erlang-cookie: YjlMd0ZzMnZtdm9PU0RWWVlXTExGeDNzUVEzaGhMV04=
-  rabbitmq-password: d0dYYmtCeTJoUg==
+  run.sh: |-
+    @test "Test Health" {
+      url="http://grafana/api/health"
+
+      code=$(wget --server-response --spider --timeout 10 --tries 1 ${url} 2>&1 | awk '/^  HTTP/{print $2}')
+      [ "$code" == "200" ]
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-test
+  namespace: phoenix-stage
+---
+apiVersion: v1
+data:
+  admin-password: V05zU1BpMW9CYVpuZmF4Y2ZwUFVYUGRuRG1SNGFmWnowTVlnMkc4Ng==
+  admin-user: YWRtaW4=
+  ldap-toml: ""
 kind: Secret
 metadata:
   labels:
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: grafana
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
   namespace: phoenix-stage
 type: Opaque
 ---
@@ -124,350 +280,146 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/instance: grafana
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: edgesql
-    app.kubernetes.io/version: 1.16.0
-    helm.sh/chart: edgesql-0.1.0
-    namespace: patchme
-  name: edgesql-service
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
   namespace: phoenix-stage
 spec:
   ports:
-  - name: sql
-    port: 1433
+  - name: service
+    port: 80
     protocol: TCP
-    targetPort: 1433
+    targetPort: 3000
   selector:
-    app.kubernetes.io/instance: edgesql
-    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/name: grafana
   type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app.kubernetes.io/instance: rabbitmq
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq
-  namespace: phoenix-stage
-spec:
-  ports:
-  - name: amqp
-    nodePort: null
-    port: 5672
-    targetPort: amqp
-  - name: epmd
-    nodePort: null
-    port: 4369
-    targetPort: epmd
-  - name: dist
-    nodePort: null
-    port: 25672
-    targetPort: dist
-  - name: http-stats
-    nodePort: null
-    port: 15672
-    targetPort: stats
-  selector:
-    app.kubernetes.io/instance: rabbitmq
-    app.kubernetes.io/name: rabbitmq
-  type: ClusterIP
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app.kubernetes.io/instance: rabbitmq
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-headless
-  namespace: phoenix-stage
-spec:
-  clusterIP: None
-  ports:
-  - name: epmd
-    port: 4369
-    targetPort: epmd
-  - name: amqp
-    port: 5672
-    targetPort: amqp
-  - name: dist
-    port: 25672
-    targetPort: dist
-  - name: http-stats
-    port: 15672
-    targetPort: stats
-  selector:
-    app.kubernetes.io/instance: rabbitmq
-    app.kubernetes.io/name: rabbitmq
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  labels:
-    app.kubernetes.io/instance: edgesql
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: edgesql
-    app.kubernetes.io/version: 1.16.0
-    helm.sh/chart: edgesql-0.1.0
-    namespace: patchme
-  name: edgesql-pvc
-  namespace: phoenix-stage
-spec:
-  accessModes:
-  - ReadWriteOnce
-  resources:
-    requests:
-      storage: 2Gi
-  storageClassName: ase-node-local
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/instance: grafana
     app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: edgesql
-    app.kubernetes.io/version: 1.16.0
-    helm.sh/chart: edgesql-0.1.0
-    namespace: patchme
-  name: edgesql
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana
   namespace: phoenix-stage
 spec:
   replicas: 1
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app.kubernetes.io/instance: edgesql
-      app.kubernetes.io/name: edgesql
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/instance: edgesql
-        app.kubernetes.io/name: edgesql
-    spec:
-      containers:
-      - env:
-        - name: MSSQL_PID
-          value: Developer
-        - name: ACCEPT_EULA
-          value: "Y"
-        - name: SA_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              key: SA_PASSWORD
-              name: edgesql-secret
-        - name: MSSQL_AGENT_ENABLED
-          value: "TRUE"
-        - name: MSSQL_COLLATION
-          value: SQL_Latin1_General_CP1_CI_AS
-        - name: MSSQL_LCID
-          value: "1033"
-        image: ecr.ase-usgva-p21.missionready.local:31001/mcr.microsoft.com/azure-sql-edge:1.0.5
-        imagePullPolicy: IfNotPresent
-        name: edgesql
-        ports:
-        - containerPort: 1433
-          name: http
-          protocol: TCP
-        resources:
-          limits:
-            cpu: 1000m
-            memory: 10Gi
-          requests:
-            cpu: 125m
-            memory: 64Mi
-        volumeMounts:
-        - mountPath: /var/opt/mssql
-          name: sqldata
-      imagePullSecrets:
-      - name: ase-ecr-credentials
-      securityContext:
-        fsGroup: 1000
-        runAsUser: 1000
-      volumes:
-      - name: sqldata
-        persistentVolumeClaim:
-          claimName: edgesql-pvc
----
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  labels:
-    app.kubernetes.io/instance: stage
-    app.kubernetes.io/managed-by: Helm
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: rabbitmq
-  namespace: phoenix-stage
-spec:
-  podManagementPolicy: OrderedReady
-  replicas: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/instance: stage
-      app.kubernetes.io/name: rabbitmq
-  serviceName: rabbitmq-headless
+      app.kubernetes.io/instance: grafana
+      app.kubernetes.io/name: grafana
+  strategy:
+    type: RollingUpdate
   template:
     metadata:
       annotations:
-        checksum/config: cec4b9a310e88fa014cd2d28564a2764f57bb35e21f6e20178e393559af6e460
-        checksum/secret: 20c63b81363af6cc6165c76f0451e0adbd66f4fcd0bcc7f10ca4bd9bfe66bd94
+        checksum/config: 65b172d461a3f1ce10fec656ce903a8d103cccf5928159fc3c9fbfa5e90f45cb
+        checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/secret: 0ded8ffb44c1eaa5db102fa42aa1ea3987fb4f28c2e00338242b13e3714f3fdd
       labels:
-        app.kubernetes.io/instance: stage
-        app.kubernetes.io/managed-by: Helm
-        app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.29.3
+        app.kubernetes.io/instance: grafana
+        app.kubernetes.io/name: grafana
     spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/instance: stage
-                  app.kubernetes.io/name: rabbitmq
-              namespaces:
-              - phoenix-stage
-              topologyKey: kubernetes.io/hostname
-            weight: 1
+      automountServiceAccountToken: true
       containers:
       - env:
-        - name: BITNAMI_DEBUG
-          value: "false"
-        - name: MY_POD_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.podIP
-        - name: MY_POD_NAME
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.name
-        - name: MY_POD_NAMESPACE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.namespace
-        - name: K8S_SERVICE_NAME
-          value: rabbitmq-headless
-        - name: K8S_ADDRESS_TYPE
-          value: hostname
-        - name: RABBITMQ_FORCE_BOOT
-          value: "no"
-        - name: RABBITMQ_NODE_NAME
-          value: rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
-        - name: K8S_HOSTNAME_SUFFIX
-          value: .$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
-        - name: RABBITMQ_MNESIA_DIR
-          value: /bitnami/rabbitmq/mnesia/$(RABBITMQ_NODE_NAME)
-        - name: RABBITMQ_LDAP_ENABLE
-          value: "no"
-        - name: RABBITMQ_LOGS
-          value: '-'
-        - name: RABBITMQ_ULIMIT_NOFILES
-          value: "65536"
-        - name: RABBITMQ_USE_LONGNAME
-          value: "true"
-        - name: RABBITMQ_ERL_COOKIE
+        - name: GF_SECURITY_ADMIN_USER
           valueFrom:
             secretKeyRef:
-              key: rabbitmq-erlang-cookie
-              name: rabbitmq
-        - name: RABBITMQ_LOAD_DEFINITIONS
-          value: "no"
-        - name: RABBITMQ_SECURE_PASSWORD
-          value: "yes"
-        - name: RABBITMQ_USERNAME
-          value: phoenix
-        - name: RABBITMQ_PASSWORD
+              key: admin-user
+              name: grafana
+        - name: GF_SECURITY_ADMIN_PASSWORD
           valueFrom:
             secretKeyRef:
-              key: rabbitmq-password
-              name: rabbitmq
-        - name: RABBITMQ_PLUGINS
-          value: rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap
-        image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
+              key: admin-password
+              name: grafana
+        - name: GF_PATHS_DATA
+          value: /var/lib/grafana/
+        - name: GF_PATHS_LOGS
+          value: /var/log/grafana
+        - name: GF_PATHS_PLUGINS
+          value: /var/lib/grafana/plugins
+        - name: GF_PATHS_PROVISIONING
+          value: /etc/grafana/provisioning
+        image: grafana/grafana:8.4.2
         imagePullPolicy: IfNotPresent
-        lifecycle:
-          preStop:
-            exec:
-              command:
-              - /bin/bash
-              - -ec
-              - |
-                if [[ -f /opt/bitnami/scripts/rabbitmq/nodeshutdown.sh ]]; then
-                    /opt/bitnami/scripts/rabbitmq/nodeshutdown.sh -t "120" -d  "false"
-                else
-                    rabbitmqctl stop_app
-                fi
         livenessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - -ec
-            - rabbitmq-diagnostics -q ping
-          failureThreshold: 6
-          initialDelaySeconds: 120
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 20
-        name: rabbitmq
+          failureThreshold: 10
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 60
+          timeoutSeconds: 30
+        name: grafana
         ports:
-        - containerPort: 5672
-          name: amqp
-        - containerPort: 25672
-          name: dist
-        - containerPort: 15672
-          name: stats
-        - containerPort: 4369
-          name: epmd
+        - containerPort: 80
+          name: service
+          protocol: TCP
+        - containerPort: 3000
+          name: grafana
+          protocol: TCP
         readinessProbe:
-          exec:
-            command:
-            - /bin/bash
-            - -ec
-            - rabbitmq-diagnostics -q check_running && rabbitmq-diagnostics -q check_local_alarms
-          failureThreshold: 3
-          initialDelaySeconds: 10
-          periodSeconds: 30
-          successThreshold: 1
-          timeoutSeconds: 20
-        resources:
-          limits: {}
-          requests: {}
+          httpGet:
+            path: /api/health
+            port: 3000
+        resources: {}
         volumeMounts:
-        - mountPath: /bitnami/rabbitmq/conf
-          name: configuration
-        - mountPath: /bitnami/rabbitmq/mnesia
-          name: data
-      imagePullSecrets:
-      - name: ase-ecr-credentials
+        - mountPath: /etc/grafana/grafana.ini
+          name: config
+          subPath: grafana.ini
+        - mountPath: /var/lib/grafana
+          name: storage
+      enableServiceLinks: true
       securityContext:
-        fsGroup: 1001
-        runAsUser: 1001
-      serviceAccountName: rabbitmq
-      terminationGracePeriodSeconds: 120
+        fsGroup: 472
+        runAsGroup: 472
+        runAsUser: 472
+      serviceAccountName: grafana
       volumes:
       - configMap:
-          items:
-          - key: rabbitmq.conf
-            path: rabbitmq.conf
-          name: rabbitmq-config
-        name: configuration
-  updateStrategy:
-    type: RollingUpdate
-  volumeClaimTemplates:
-  - metadata:
-      labels:
-        app.kubernetes.io/instance: stage
-        app.kubernetes.io/name: rabbitmq
-      name: data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 10Gi
-      storageClassName: ase-node-local
+          name: grafana
+        name: config
+      - emptyDir: {}
+        name: storage
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    helm.sh/hook: test-success
+  labels:
+    app.kubernetes.io/instance: grafana
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 8.4.2
+    helm.sh/chart: grafana-6.24.1
+  name: grafana-test
+  namespace: phoenix-stage
+spec:
+  containers:
+  - command:
+    - /opt/bats/bin/bats
+    - -t
+    - /tests/run.sh
+    image: bats/bats:v1.4.1
+    imagePullPolicy: IfNotPresent
+    name: grafana-test
+    volumeMounts:
+    - mountPath: /tests
+      name: tests
+      readOnly: true
+  restartPolicy: Never
+  serviceAccountName: grafana-test
+  volumes:
+  - configMap:
+      name: grafana-test
+    name: tests

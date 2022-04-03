@@ -7,7 +7,7 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
@@ -22,13 +22,13 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "d0dYYmtCeTJoUg=="
-  rabbitmq-erlang-cookie: "YjlMd0ZzMnZtdm9PU0RWWVlXTExGeDNzUVEzaGhMV04="
+  rabbitmq-password: "cm0wbWpqSUszaA=="
+  rabbitmq-erlang-cookie: "TXRlaUM1cGxJSjFxbUhZbUY2MHpRVTlUOFNnbWl2OW0="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -38,7 +38,7 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 data:
@@ -60,7 +60,6 @@ data:
     loopback_users.guest = false
     #default_vhost = patchme-vhost
     #disk_free_limit.absolute = 50MB
-    #load_definitions = /app/load_definition.json
 ---
 # Source: rabbitmq/templates/role.yaml
 kind: Role
@@ -70,7 +69,7 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 rules:
@@ -89,7 +88,7 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 subjects:
@@ -108,7 +107,7 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -129,6 +128,7 @@ spec:
   selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: rabbitmq
+  publishNotReadyAddresses: true
 ---
 # Source: rabbitmq/templates/svc.yaml
 apiVersion: v1
@@ -138,7 +138,7 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -172,7 +172,7 @@ metadata:
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.24.2
+    helm.sh/chart: rabbitmq-8.31.2
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -189,12 +189,12 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.24.2
+        helm.sh/chart: rabbitmq-8.31.2
         app.kubernetes.io/instance: rabbitmq
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: d5365b3a309149fd623e1c92a287396ec70d4e1cc50ad783d6e10b196fc66737
-        checksum/secret: a56957d2f49e22ed482d248380a5fa5e7375c5fa03d5d80f1b66e2bf87f28914
+        checksum/config: d6abda21e689479d8f9263400437c21cf2702ba2dcb0a26c5b7127fff2c4a941
+        checksum/secret: 7477e976ce1572cdfb014a1dcf7ee2bc4cfab2db9f99aca036ce7ffa1fbc7095
     spec:
       
       serviceAccountName: rabbitmq
@@ -220,7 +220,7 @@ spec:
       terminationGracePeriodSeconds: 120
       containers:
         - name: rabbitmq
-          image: docker.io/bitnami/rabbitmq:3.9.8-debian-10-r6
+          image: docker.io/bitnami/rabbitmq:3.9.14-debian-10-r12
           imagePullPolicy: "IfNotPresent"
           env:
             - name: BITNAMI_DEBUG
@@ -264,6 +264,8 @@ spec:
                   key: rabbitmq-erlang-cookie
             - name: RABBITMQ_LOAD_DEFINITIONS
               value: "no"
+            - name: RABBITMQ_DEFINITIONS_FILE
+              value: "/app/load_definition.json"
             - name: RABBITMQ_SECURE_PASSWORD
               value: "yes"
             - name: RABBITMQ_USERNAME
