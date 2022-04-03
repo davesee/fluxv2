@@ -10,9 +10,9 @@ main() {
     import_source infra rabbitmq https://charts.bitnami.com/bitnami bitnami/rabbitmq \
         "service.type=LoadBalancer,auth.username=phoenix,auth.password=vmuTaXjX5QMQTy==,metrics.enabled=true"
     import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana \
-        "testFramework.enabled=false,service.type=LoadBalancer"
+        "service.type=LoadBalancer,testFramework.enabled=false,image.pullSecrets[0]=ase-ecr-credentials"
     import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus \
-        "nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false,service.type=LoadBalancer"
+        "service.type=LoadBalancer,nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false,imagePullSecrets[0].name=ase-ecr-credentials"
 
     # create custom chart yamls
     helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="edgesql" --namespace patchme \

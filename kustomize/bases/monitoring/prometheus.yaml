@@ -789,6 +789,8 @@ spec:
               subPath: ""
       hostNetwork: false
       dnsPolicy: ClusterFirst
+      imagePullSecrets:
+        - name: ase-ecr-credentials
       securityContext:
         fsGroup: 65534
         runAsGroup: 65534
