@@ -1,8 +1,8 @@
 bases:
-  - patches/namespace.yaml
+  #  - patches/namespace.yaml
   - ../../bases
 
-namespace: phoenix-test
+namespace: phoenix-stage
 namePrefix: phoenix-
 
 generatorOptions:

@@ -1,9 +1,4 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: phoenix-test
----
-apiVersion: v1
 automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
@@ -13,7 +8,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq
-  namespace: phoenix-test
+  namespace: phoenix-stage
 secrets:
 - name: rabbitmq
 ---
@@ -26,7 +21,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq-endpoint-reader
-  namespace: phoenix-test
+  namespace: phoenix-stage
 rules:
 - apiGroups:
   - ""
@@ -50,7 +45,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq-endpoint-reader
-  namespace: phoenix-test
+  namespace: phoenix-stage
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -58,7 +53,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: phoenix-rabbitmq
-  namespace: phoenix-test
+  namespace: phoenix-stage
 ---
 apiVersion: v1
 data:
@@ -89,7 +84,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq-config
-  namespace: phoenix-test
+  namespace: phoenix-stage
 ---
 apiVersion: v1
 data:
@@ -100,7 +95,7 @@ data:
 kind: Secret
 metadata:
   name: phoenix-edgesql-secret
-  namespace: phoenix-test
+  namespace: phoenix-stage
 type: Opaque
 ---
 apiVersion: v1
@@ -115,7 +110,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq
-  namespace: phoenix-test
+  namespace: phoenix-stage
 type: Opaque
 ---
 apiVersion: v1
@@ -127,7 +122,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq
-  namespace: phoenix-test
+  namespace: phoenix-stage
 spec:
   ports:
   - name: amqp
@@ -160,7 +155,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq-headless
-  namespace: phoenix-test
+  namespace: phoenix-stage
 spec:
   clusterIP: None
   ports:
@@ -189,7 +184,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: phoenix-rabbitmq
-  namespace: phoenix-test
+  namespace: phoenix-stage
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1
