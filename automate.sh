@@ -8,7 +8,7 @@ export prefix="phoenix"
 main() {
     # create public chart yamls
     import_source infra rabbitmq https://charts.bitnami.com/bitnami bitnami/rabbitmq \
-        "service.type=LoadBalancer"
+        "service.type=LoadBalancer,auth.username=phoenix,auth.password=vmuTaXjX5QMQT1@~"
     import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana \
         "testFramework.enabled=false,service.type=LoadBalancer"
     import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus \

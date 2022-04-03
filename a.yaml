@@ -881,7 +881,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  admin-password: eGphMHlMckpibFpNMmkyZTFjTTNFMnduRndmYk9YNVUyc0JkbFRwVg==
+  admin-password: ZmxOZlVnWDNBa3cyT1V1QnM1S21ZdU1Cc0pKckd5Zm05VUF1UlV4Ng==
   admin-user: YWRtaW4=
   ldap-toml: ""
 kind: Secret
@@ -898,8 +898,8 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  rabbitmq-erlang-cookie: dlF5aFQ2M0lnRFhGQXBLbnllMTFtOFNyWXQ3QWozZ2w=
-  rabbitmq-password: aU00NWFiSDlJNg==
+  rabbitmq-erlang-cookie: N3N0aHZFNTRDN2F4ZGVjSkdNWnVMREwxbVB3czZoYjc=
+  rabbitmq-password: SXJ0YWl2d0NVbg==
 kind: Secret
 metadata:
   labels:
@@ -954,7 +954,7 @@ spec:
   selector:
     app.kubernetes.io/instance: phoenix-grafana
     app.kubernetes.io/name: grafana
-  type: ClusterIP
+  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service
@@ -1017,27 +1017,24 @@ metadata:
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 spec:
+  externalTrafficPolicy: Cluster
   ports:
   - name: amqp
-    nodePort: null
     port: 5672
     targetPort: amqp
   - name: epmd
-    nodePort: null
     port: 4369
     targetPort: epmd
   - name: dist
-    nodePort: null
     port: 25672
     targetPort: dist
   - name: http-stats
-    nodePort: null
     port: 15672
     targetPort: stats
   selector:
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/name: rabbitmq
-  type: ClusterIP
+  type: LoadBalancer
 ---
 apiVersion: v1
 kind: Service
@@ -1202,7 +1199,7 @@ spec:
         checksum/config: 29e71bec037ea0eece29019cc49b2213e556bb33c522152cc20715200c468f23
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: b8c4cfe97af8748ff330df3dbcaedfd88994c6d6b734a107399b2e50a61aa8fb
+        checksum/secret: 2ab211267e2239d157345e33b188cd51b7aae2739f49a3680644a4d30c5e9d06
       labels:
         app.kubernetes.io/instance: phoenix-grafana
         app.kubernetes.io/name: grafana
@@ -1447,7 +1444,7 @@ spec:
     metadata:
       annotations:
         checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
-        checksum/secret: bf2c970eb87a80bcdf9f3739a3123e77715c35bc275fc94e66f4bf0cdb1009d6
+        checksum/secret: 0b3fb861ce656f5636732895b1ca958ae192e3415899d504e588a338c580a90f
       labels:
         app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm

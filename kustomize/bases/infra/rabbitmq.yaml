@@ -27,8 +27,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "SXJ0YWl2d0NVbg=="
-  rabbitmq-erlang-cookie: "N3N0aHZFNTRDN2F4ZGVjSkdNWnVMREwxbVB3czZoYjc="
+  rabbitmq-password: "dm11VGFYalg1UU1RVDFAfg=="
+  rabbitmq-erlang-cookie: "UnBQZzNZSU5KbDZUaUxtTlhRZmFmUzlscTNsdWNnRFc="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -45,7 +45,7 @@ data:
   rabbitmq.conf: |-
     ## Username and password
     ##
-    default_user = user
+    default_user = phoenix
     default_pass = CHANGEME
     ## Clustering
     ##
@@ -190,8 +190,8 @@ spec:
         app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
-        checksum/secret: 0b3fb861ce656f5636732895b1ca958ae192e3415899d504e588a338c580a90f
+        checksum/config: 532afbb9fc19f451fc6f0c99ac20bf390e70943839230b5e51e0c1d54ba1e1e9
+        checksum/secret: 96b445c053753537867062c5bbfad130e2271792dd8f7af26e4fec0db38592e4
     spec:
       
       serviceAccountName: phoenix-rabbitmq
@@ -266,7 +266,7 @@ spec:
             - name: RABBITMQ_SECURE_PASSWORD
               value: "yes"
             - name: RABBITMQ_USERNAME
-              value: "user"
+              value: "phoenix"
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
