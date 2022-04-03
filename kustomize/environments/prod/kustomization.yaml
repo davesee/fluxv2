@@ -11,12 +11,12 @@ namespace: phoenix-stage
 #     newTag: 3.9.13-debian-10-r38
 
 patches:
-  - path: patches/rabbitmq.yaml
+  - path: patches/rabbitmq_stateful_set.yaml
     target:
-      group: apps
-      version: v1
       kind: StatefulSet
-      name: rabbitmq
+  - path: patches/prometheus_pvc.yaml
+    target:
+      kind: PersistentVolumeClaim
 # secretGenerator:
 #   - name: edgesql-secret
 #     envs:

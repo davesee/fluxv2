@@ -8,9 +8,10 @@ export prefix="phoenix"
 main() {
     # create public chart yamls
     import_source infra rabbitmq https://charts.bitnami.com/bitnami bitnami/rabbitmq
-    import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana "testFramework.enabled=false"
-    import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus "nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false"
-    # import_source monitoring kube-state-metrics https://prometheus-community.github.io/helm-charts prometheus-community/kube-state-metrics
+    import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana \
+        "testFramework.enabled=false"
+    import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus \
+        "nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false"
 
     # create custom chart yamls
     helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="edgesql" --namespace patchme --set "sqldb.fullnameOverride=$prefix-edgesql" >./kustomize/bases/infra/edgesql.yaml
@@ -38,7 +39,7 @@ import_source() {
     # create the complete chart in one yaml file
     helm template "./sources/$name/$version" --name-template="$prefix-$name" --namespace patchme $set_vars >./kustomize/bases/$base_type/$name.yaml
 
-    # remove sources
+    # optional remove sources
     # rm -rf ./sources/$name
 }
 
