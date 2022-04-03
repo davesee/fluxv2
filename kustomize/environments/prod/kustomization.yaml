@@ -3,7 +3,6 @@ bases:
   - ../../bases
 
 namespace: phoenix-stage
-namePrefix: phoenix-
 
 # Affect images across all deployments
 # images:

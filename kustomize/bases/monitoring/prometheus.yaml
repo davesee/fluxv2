@@ -9,9 +9,9 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/version: "2.4.1"
-  name: prometheus-kube-state-metrics
+  name: phoenix-prometheus-kube-state-metrics
   namespace: patchme
 imagePullSecrets:
   []
@@ -23,10 +23,10 @@ metadata:
   labels:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
     chart: prometheus-15.8.0
     heritage: Helm
-  name: prometheus-server
+  name: phoenix-prometheus-server
   namespace: patchme
   annotations:
     {}
@@ -38,10 +38,10 @@ metadata:
   labels:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
     chart: prometheus-15.8.0
     heritage: Helm
-  name: prometheus-server
+  name: phoenix-prometheus-server
   namespace: patchme
 data:
   alerting_rules.yml: |
@@ -343,10 +343,10 @@ metadata:
   labels:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
     chart: prometheus-15.8.0
     heritage: Helm
-  name: prometheus-server
+  name: phoenix-prometheus-server
   namespace: patchme
 spec:
   accessModes:
@@ -365,9 +365,9 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/version: "2.4.1"
-  name: prometheus-kube-state-metrics
+  name: phoenix-prometheus-kube-state-metrics
 rules:
 
 - apiGroups: ["certificates.k8s.io"]
@@ -512,10 +512,10 @@ metadata:
   labels:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
     chart: prometheus-15.8.0
     heritage: Helm
-  name: prometheus-server
+  name: phoenix-prometheus-server
 rules:
   - apiGroups:
       - ""
@@ -557,16 +557,16 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/version: "2.4.1"
-  name: prometheus-kube-state-metrics
+  name: phoenix-prometheus-kube-state-metrics
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus-kube-state-metrics
+  name: phoenix-prometheus-kube-state-metrics
 subjects:
 - kind: ServiceAccount
-  name: prometheus-kube-state-metrics
+  name: phoenix-prometheus-kube-state-metrics
   namespace: patchme
 ---
 # Source: prometheus/templates/server/clusterrolebinding.yaml
@@ -576,24 +576,24 @@ metadata:
   labels:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
     chart: prometheus-15.8.0
     heritage: Helm
-  name: prometheus-server
+  name: phoenix-prometheus-server
 subjects:
   - kind: ServiceAccount
-    name: prometheus-server
+    name: phoenix-prometheus-server
     namespace: patchme
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus-server
+  name: phoenix-prometheus-server
 ---
 # Source: prometheus/charts/kube-state-metrics/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: prometheus-kube-state-metrics
+  name: phoenix-prometheus-kube-state-metrics
   namespace: patchme
   labels:    
     helm.sh/chart: kube-state-metrics-4.7.0
@@ -601,7 +601,7 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/version: "2.4.1"
   annotations:
     prometheus.io/scrape: 'true'
@@ -615,7 +615,7 @@ spec:
   
   selector:    
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
 ---
 # Source: prometheus/templates/server/service.yaml
 apiVersion: v1
@@ -624,10 +624,10 @@ metadata:
   labels:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
     chart: prometheus-15.8.0
     heritage: Helm
-  name: prometheus-server
+  name: phoenix-prometheus-server
   namespace: patchme
 spec:
   ports:
@@ -638,7 +638,7 @@ spec:
   selector:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
   sessionAffinity: None
   type: "ClusterIP"
 ---
@@ -646,7 +646,7 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prometheus-kube-state-metrics
+  name: phoenix-prometheus-kube-state-metrics
   namespace: patchme
   labels:    
     helm.sh/chart: kube-state-metrics-4.7.0
@@ -654,13 +654,13 @@ metadata:
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/instance: phoenix-prometheus
     app.kubernetes.io/version: "2.4.1"
 spec:
   selector:
     matchLabels:      
       app.kubernetes.io/name: kube-state-metrics
-      app.kubernetes.io/instance: prometheus
+      app.kubernetes.io/instance: phoenix-prometheus
   replicas: 1
   template:
     metadata:
@@ -670,11 +670,11 @@ spec:
         app.kubernetes.io/component: metrics
         app.kubernetes.io/part-of: kube-state-metrics
         app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/instance: prometheus
+        app.kubernetes.io/instance: phoenix-prometheus
         app.kubernetes.io/version: "2.4.1"
     spec:
       hostNetwork: false
-      serviceAccountName: prometheus-kube-state-metrics
+      serviceAccountName: phoenix-prometheus-kube-state-metrics
       securityContext:
         fsGroup: 65534
         runAsGroup: 65534
@@ -710,29 +710,29 @@ metadata:
   labels:
     component: "server"
     app: prometheus
-    release: prometheus
+    release: phoenix-prometheus
     chart: prometheus-15.8.0
     heritage: Helm
-  name: prometheus-server
+  name: phoenix-prometheus-server
   namespace: patchme
 spec:
   selector:
     matchLabels:
       component: "server"
       app: prometheus
-      release: prometheus
+      release: phoenix-prometheus
   replicas: 1
   template:
     metadata:
       labels:
         component: "server"
         app: prometheus
-        release: prometheus
+        release: phoenix-prometheus
         chart: prometheus-15.8.0
         heritage: Helm
     spec:
       enableServiceLinks: true
-      serviceAccountName: prometheus-server
+      serviceAccountName: phoenix-prometheus-server
       containers:
         - name: prometheus-server-configmap-reload
           image: "jimmidyson/configmap-reload:v0.5.0"
@@ -798,7 +798,7 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: prometheus-server
+            name: phoenix-prometheus-server
         - name: storage-volume
           persistentVolumeClaim:
-            claimName: prometheus-server
+            claimName: phoenix-prometheus-server

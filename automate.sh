@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# Generate yaml from Helm charts
+# Generate yaml from Helm charts for use with Kustomize
 # https://helm.sh/docs/helm/helm_template/
+
+export prefix="phoenix"
 
 main() {
     # create public chart yamls
@@ -11,7 +13,7 @@ main() {
     # import_source monitoring kube-state-metrics https://prometheus-community.github.io/helm-charts prometheus-community/kube-state-metrics
 
     # create custom chart yamls
-    helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template=edgesql --namespace patchme >./kustomize/bases/infra/edgesql.yaml
+    helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="$prefix-edgesql" --namespace patchme >./kustomize/bases/infra/edgesql.yaml
 }
 
 import_source() {
@@ -25,17 +27,18 @@ import_source() {
     rm -rf ./sources/$name ./kustomize/bases/$base_type/$name.yaml
     mkdir -p ./sources/$name
 
-    # add the repo and pull the chart
+    # add the repo, pull the chart, and set vars
     silent=$(helm repo add $name $helm_repo)
     helm pull $chart -d ./sources/$name
-    version=$(ls ./sources/$name)
     silent=$(helm repo remove $name)
 
+    version=$(ls ./sources/$name)
     if [[ -n $vars ]]; then set_vars="--set $vars"; else set_vars=""; fi
 
     # create the complete chart in one yaml file
-    helm template "./sources/$name/$version" --name-template="$name" --namespace patchme $set_vars >./kustomize/bases/$base_type/$name.yaml
+    helm template "./sources/$name/$version" --name-template="$prefix-$name" --namespace patchme $set_vars >./kustomize/bases/$base_type/$name.yaml
 
+    # remove sources
     # rm -rf ./sources/$name
 }
 

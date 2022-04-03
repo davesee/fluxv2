@@ -3,43 +3,43 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 automountServiceAccountToken: true
 secrets:
-  - name: rabbitmq
+  - name: phoenix-rabbitmq
 ---
 # Source: rabbitmq/templates/secrets.yaml
 apiVersion: v1
 kind: Secret
 metadata:
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "UUhVTm1hWDRuYw=="
-  rabbitmq-erlang-cookie: "R0lzM2tsaU1RU2hHOUt2SVUweTd1TjROVGQ5M3d2T2Y="
+  rabbitmq-password: "a1lTcDRBcWxRTw=="
+  rabbitmq-erlang-cookie: "Q2pTVG93YnRPWktYN2t3bHREUG1KS1pEcVRoelJwME4="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: rabbitmq-config
+  name: phoenix-rabbitmq-config
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 data:
   rabbitmq.conf: |-
@@ -65,12 +65,12 @@ data:
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: rabbitmq-endpoint-reader
+  name: phoenix-rabbitmq-endpoint-reader
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 rules:
   - apiGroups: [""]
@@ -84,31 +84,31 @@ rules:
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: rabbitmq-endpoint-reader
+  name: phoenix-rabbitmq-endpoint-reader
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 subjects:
   - kind: ServiceAccount
-    name: rabbitmq
+    name: phoenix-rabbitmq
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: rabbitmq-endpoint-reader
+  name: phoenix-rabbitmq-endpoint-reader
 ---
 # Source: rabbitmq/templates/svc-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq-headless
+  name: phoenix-rabbitmq-headless
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
   clusterIP: None
@@ -127,19 +127,19 @@ spec:
       targetPort: stats
   selector: 
     app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
   publishNotReadyAddresses: true
 ---
 # Source: rabbitmq/templates/svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
   type: ClusterIP
@@ -162,21 +162,21 @@ spec:
       nodePort: null
   selector: 
     app.kubernetes.io/name: rabbitmq
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
 ---
 # Source: rabbitmq/templates/statefulset.yaml
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: "patchme"
   labels:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: rabbitmq
+    app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
-  serviceName: rabbitmq-headless
+  serviceName: phoenix-rabbitmq-headless
   podManagementPolicy: OrderedReady
   replicas: 1
   updateStrategy:
@@ -184,20 +184,20 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: rabbitmq
-      app.kubernetes.io/instance: rabbitmq
+      app.kubernetes.io/instance: phoenix-rabbitmq
   template:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
         helm.sh/chart: rabbitmq-8.31.2
-        app.kubernetes.io/instance: rabbitmq
+        app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: d6abda21e689479d8f9263400437c21cf2702ba2dcb0a26c5b7127fff2c4a941
-        checksum/secret: 5e492fe81e5fca25e0fe0df46050361d16cc2001356340c85d9380542227864f
+        checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
+        checksum/secret: 13f4d0cab9ea88f781b857ef0bf52666552f071eb24ab2c751ab6cf091357865
     spec:
       
-      serviceAccountName: rabbitmq
+      serviceAccountName: phoenix-rabbitmq
       affinity:
         podAffinity:
           
@@ -207,7 +207,7 @@ spec:
                 labelSelector:
                   matchLabels:
                     app.kubernetes.io/name: rabbitmq
-                    app.kubernetes.io/instance: rabbitmq
+                    app.kubernetes.io/instance: phoenix-rabbitmq
                 namespaces:
                   - "patchme"
                 topologyKey: kubernetes.io/hostname
@@ -238,7 +238,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: K8S_SERVICE_NAME
-              value: "rabbitmq-headless"
+              value: "phoenix-rabbitmq-headless"
             - name: K8S_ADDRESS_TYPE
               value: hostname
             - name: RABBITMQ_FORCE_BOOT
@@ -260,7 +260,7 @@ spec:
             - name: RABBITMQ_ERL_COOKIE
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq
+                  name: phoenix-rabbitmq
                   key: rabbitmq-erlang-cookie
             - name: RABBITMQ_LOAD_DEFINITIONS
               value: "no"
@@ -273,7 +273,7 @@ spec:
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq
+                  name: phoenix-rabbitmq
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
               value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
@@ -331,7 +331,7 @@ spec:
       volumes:
         - name: configuration
           configMap:
-            name: rabbitmq-config
+            name: phoenix-rabbitmq-config
             items:
               - key: rabbitmq.conf
                 path: rabbitmq.conf
@@ -340,7 +340,7 @@ spec:
         name: data
         labels:
           app.kubernetes.io/name: rabbitmq
-          app.kubernetes.io/instance: rabbitmq
+          app.kubernetes.io/instance: phoenix-rabbitmq
       spec:
         accessModes:
           - "ReadWriteOnce"
