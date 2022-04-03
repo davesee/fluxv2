@@ -5,8 +5,8 @@ bases:
 namespace: phoenix-stage
 # namePrefix: phoenix-
 
-# generatorOptions:
-#   disableNameSuffixHash: true
+generatorOptions:
+  disableNameSuffixHash: true
 
 # Affect images across all deployments
 # images:
