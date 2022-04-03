@@ -17,7 +17,7 @@ patches:
       version: v1
       kind: StatefulSet
       name: rabbitmq
-  - path: patches/prometheus_pvc.yaml
+  - path: patches/any_pvc.yaml
     target:
       kind: PersistentVolumeClaim
 # secretGenerator:
