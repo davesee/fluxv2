@@ -2,16 +2,58 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: rabbitmq
+  name: phoenix-rabbitmq
+  namespace: "patchme"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.31.2
+    app.kubernetes.io/instance: phoenix-rabbitmq
+    app.kubernetes.io/managed-by: Helm
 spec:
+  serviceName: phoenix-rabbitmq-headless
+  podManagementPolicy: OrderedReady
   replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+      app.kubernetes.io/instance: phoenix-rabbitmq
   template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rabbitmq
+        helm.sh/chart: rabbitmq-8.31.2
+        app.kubernetes.io/instance: phoenix-rabbitmq
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
+        checksum/secret: bf2c970eb87a80bcdf9f3739a3123e77715c35bc275fc94e66f4bf0cdb1009d6
     spec:
-      imagePullSecrets:
-        - name: ase-ecr-credentials
+      serviceAccountName: phoenix-rabbitmq
+      affinity:
+        podAffinity:
+
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/name: rabbitmq
+                    app.kubernetes.io/instance: phoenix-rabbitmq
+                namespaces:
+                  - "patchme"
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+
+      securityContext:
+        fsGroup: 1001
+        runAsUser: 1001
+      terminationGracePeriodSeconds: 120
       containers:
         - name: rabbitmq
-          image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
+          image: docker.io/bitnami/rabbitmq:3.9.14-debian-10-r12
           imagePullPolicy: "IfNotPresent"
           env:
             - name: BITNAMI_DEBUG
@@ -29,7 +71,7 @@ spec:
                 fieldRef:
                   fieldPath: metadata.namespace
             - name: K8S_SERVICE_NAME
-              value: "rabbitmq-headless"
+              value: "phoenix-rabbitmq-headless"
             - name: K8S_ADDRESS_TYPE
               value: hostname
             - name: RABBITMQ_FORCE_BOOT
@@ -51,18 +93,20 @@ spec:
             - name: RABBITMQ_ERL_COOKIE
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq
+                  name: phoenix-rabbitmq
                   key: rabbitmq-erlang-cookie
             - name: RABBITMQ_LOAD_DEFINITIONS
               value: "no"
+            - name: RABBITMQ_DEFINITIONS_FILE
+              value: "/app/load_definition.json"
             - name: RABBITMQ_SECURE_PASSWORD
               value: "yes"
             - name: RABBITMQ_USERNAME
-              value: "phoenix"
+              value: "user"
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: rabbitmq
+                  name: phoenix-rabbitmq
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
               value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
@@ -117,13 +161,22 @@ spec:
               mountPath: /bitnami/rabbitmq/conf
             - name: data
               mountPath: /bitnami/rabbitmq/mnesia
+      volumes:
+        - name: configuration
+          configMap:
+            name: phoenix-rabbitmq-config
+            items:
+              - key: rabbitmq.conf
+                path: rabbitmq.conf
   volumeClaimTemplates:
     - metadata:
         name: data
+        labels:
+          app.kubernetes.io/name: rabbitmq
+          app.kubernetes.io/instance: phoenix-rabbitmq
       spec:
         accessModes:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: "10Gi"
-        storageClassName: ase-node-local
+            storage: "8Gi"
