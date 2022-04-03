@@ -3,6 +3,6 @@ kind: Kustomization
 
 resources:
   - infra/rabbitmq.yaml
-  # - infra/edgesql.yaml
-  # - monitoring/prometheus.yaml
-  # - monitoring/grafana.yaml
+  - infra/edgesql.yaml
+  - monitoring/prometheus.yaml
+  - monitoring/grafana.yaml
