@@ -2,7 +2,7 @@ bases:
   #   - patches/namespace.yaml
   - ../../bases
 
-namespace: phoenix-stge
+namespace: phoenix-stage
 # namePrefix: phoenix-
 
 # generatorOptions:
