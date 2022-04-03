@@ -1,0 +1,81 @@
+# Source: rabbitmq/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: rabbitmq
+  namespace: "patchme"
+spec:
+  template:
+    spec:
+      imagePullSecrets:
+        - name: ase-ecr-credentials
+      containers:
+        - name: rabbitmq
+          image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
+          imagePullPolicy: "IfNotPresent"
+          env:
+            - name: BITNAMI_DEBUG
+              value: "false"
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: K8S_SERVICE_NAME
+              value: "rabbitmq-headless"
+            - name: K8S_ADDRESS_TYPE
+              value: hostname
+            - name: RABBITMQ_FORCE_BOOT
+              value: "no"
+            - name: RABBITMQ_NODE_NAME
+              value: "rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: K8S_HOSTNAME_SUFFIX
+              value: ".$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local"
+            - name: RABBITMQ_MNESIA_DIR
+              value: "/bitnami/rabbitmq/mnesia/$(RABBITMQ_NODE_NAME)"
+            - name: RABBITMQ_LDAP_ENABLE
+              value: "no"
+            - name: RABBITMQ_LOGS
+              value: "-"
+            - name: RABBITMQ_ULIMIT_NOFILES
+              value: "65536"
+            - name: RABBITMQ_USE_LONGNAME
+              value: "true"
+            - name: RABBITMQ_ERL_COOKIE
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: rabbitmq-erlang-cookie
+            - name: RABBITMQ_LOAD_DEFINITIONS
+              value: "no"
+            - name: RABBITMQ_SECURE_PASSWORD
+              value: "yes"
+            - name: RABBITMQ_USERNAME
+              value: "phoenix"
+            - name: RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq
+                  key: rabbitmq-password
+            - name: RABBITMQ_PLUGINS
+              value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+        labels:
+          app.kubernetes.io/name: rabbitmq
+          app.kubernetes.io/instance: rabbitmq
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "8Gi"
+        storageClassName: ase-node-local

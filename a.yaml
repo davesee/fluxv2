@@ -12,7 +12,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: phoenix-test
 secrets:
 - name: rabbitmq
@@ -25,7 +25,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-endpoint-reader
+  name: phoenix-rabbitmq-endpoint-reader
   namespace: phoenix-test
 rules:
 - apiGroups:
@@ -49,15 +49,15 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-endpoint-reader
+  name: phoenix-rabbitmq-endpoint-reader
   namespace: phoenix-test
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: rabbitmq-endpoint-reader
+  name: phoenix-rabbitmq-endpoint-reader
 subjects:
 - kind: ServiceAccount
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: phoenix-test
 ---
 apiVersion: v1
@@ -88,8 +88,20 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-config
+  name: phoenix-rabbitmq-config
   namespace: phoenix-test
+---
+apiVersion: v1
+data:
+  SA_PASSWORD: dm11VGFYalg1UU1RVFQ9PQ==
+  edgesql-hostname: ZWRnZXNxbC1zZXJ2aWNl
+  edgesql-password: dm11VGFYalg1UU1RVFQ9PQ==
+  edgesql-username: c2E=
+kind: Secret
+metadata:
+  name: phoenix-edgesql-secret
+  namespace: phoenix-test
+type: Opaque
 ---
 apiVersion: v1
 data:
@@ -102,7 +114,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: phoenix-test
 type: Opaque
 ---
@@ -114,7 +126,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq
+  name: phoenix-rabbitmq
   namespace: phoenix-test
 spec:
   ports:
@@ -147,7 +159,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
-  name: rabbitmq-headless
+  name: phoenix-rabbitmq-headless
   namespace: phoenix-test
 spec:
   clusterIP: None
@@ -175,8 +187,8 @@ metadata:
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: rabbitmq
+    helm.sh/chart: rabbitmq-8.24.2
+  name: phoenix-rabbitmq
   namespace: phoenix-test
 spec:
   podManagementPolicy: OrderedReady
@@ -185,19 +197,21 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: rabbitmq
       app.kubernetes.io/name: rabbitmq
-  serviceName: rabbitmq-headless
+  serviceName: phoenix-rabbitmq-headless
   template:
     metadata:
       annotations:
-        checksum/config: 194971e02358a2cececea0150ca55d4fe6d32561975994a43ddd0a6cacd8683c
-        checksum/secret: dd7b5ffe2e12c4b7da118f705c68c6d1f6f7d59b6e5324c077c48af664411a3b
+        checksum/config: d5365b3a309149fd623e1c92a287396ec70d4e1cc50ad783d6e10b196fc66737
+        checksum/secret: 3660f6e1ba31d8913cb1dd8053d89c3d7091781e0325506eef7dd8b8a2063b4d
       labels:
         app.kubernetes.io/instance: rabbitmq
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.29.3
+        helm.sh/chart: rabbitmq-8.24.2
     spec:
       affinity:
+        nodeAffinity: null
+        podAffinity: null
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - podAffinityTerm:
@@ -249,21 +263,21 @@ spec:
           valueFrom:
             secretKeyRef:
               key: rabbitmq-erlang-cookie
-              name: rabbitmq
+              name: phoenix-rabbitmq
         - name: RABBITMQ_LOAD_DEFINITIONS
           value: "no"
         - name: RABBITMQ_SECURE_PASSWORD
           value: "yes"
         - name: RABBITMQ_USERNAME
-          value: phoenix
+          value: user
         - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               key: rabbitmq-password
-              name: rabbitmq
+              name: phoenix-rabbitmq
         - name: RABBITMQ_PLUGINS
           value: rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap
-        image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
+        image: docker.io/bitnami/rabbitmq:3.9.8-debian-10-r6
         imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -322,14 +336,14 @@ spec:
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
-      serviceAccountName: rabbitmq
+      serviceAccountName: phoenix-rabbitmq
       terminationGracePeriodSeconds: 120
       volumes:
       - configMap:
           items:
           - key: rabbitmq.conf
             path: rabbitmq.conf
-          name: rabbitmq-config
+          name: phoenix-rabbitmq-config
         name: configuration
   updateStrategy:
     type: RollingUpdate
@@ -344,5 +358,4 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 8Gi
-      storageClassName: ase-node-local
+          storage: 10Gi

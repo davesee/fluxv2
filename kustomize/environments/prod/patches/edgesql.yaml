@@ -1,0 +1,12 @@
+---
+# Source: edgesql/templates/secret.yaml
+apiVersion: apps/v1
+kind: Secret
+metadata:
+  name: edgesql-secret
+  namespace: phoenix-prod
+  labels:
+    namespace: phoenix-prod
+stringData:
+  SA_PASSWORD: abuTaXjX5QMQTT==
+  edgesql-password: abuTaXjX5QMQTT==
