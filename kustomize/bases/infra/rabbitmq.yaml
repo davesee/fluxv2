@@ -125,7 +125,7 @@ spec:
     - name: http-stats
       port: 15672
       targetPort: stats
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
   publishNotReadyAddresses: true
@@ -160,7 +160,7 @@ spec:
       port: 15672
       targetPort: stats
       nodePort: null
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
 ---
@@ -196,11 +196,10 @@ spec:
         checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
         checksum/secret: bf2c970eb87a80bcdf9f3739a3123e77715c35bc275fc94e66f4bf0cdb1009d6
     spec:
-      
       serviceAccountName: phoenix-rabbitmq
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -213,7 +212,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
         runAsUser: 1001

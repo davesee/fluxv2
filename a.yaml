@@ -1429,10 +1429,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/instance: phoenix-rabbitmq
+    app.kubernetes.io/instance: stage
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.29.3
   name: phoenix-rabbitmq
   namespace: phoenix-stage
 spec:
@@ -1440,32 +1440,30 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app.kubernetes.io/instance: phoenix-rabbitmq
+      app.kubernetes.io/instance: stage
       app.kubernetes.io/name: rabbitmq
-  serviceName: phoenix-rabbitmq-headless
+  serviceName: rabbitmq-headless
   template:
     metadata:
       annotations:
-        checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
-        checksum/secret: bf2c970eb87a80bcdf9f3739a3123e77715c35bc275fc94e66f4bf0cdb1009d6
+        checksum/config: cec4b9a310e88fa014cd2d28564a2764f57bb35e21f6e20178e393559af6e460
+        checksum/secret: 20c63b81363af6cc6165c76f0451e0adbd66f4fcd0bcc7f10ca4bd9bfe66bd94
       labels:
-        app.kubernetes.io/instance: phoenix-rabbitmq
+        app.kubernetes.io/instance: stage
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.31.2
+        helm.sh/chart: rabbitmq-8.29.3
     spec:
       affinity:
-        nodeAffinity: null
-        podAffinity: null
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
           - podAffinityTerm:
               labelSelector:
                 matchLabels:
-                  app.kubernetes.io/instance: phoenix-rabbitmq
+                  app.kubernetes.io/instance: stage
                   app.kubernetes.io/name: rabbitmq
               namespaces:
-              - patchme
+              - phoenix-stage
               topologyKey: kubernetes.io/hostname
             weight: 1
       containers:
@@ -1485,7 +1483,7 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         - name: K8S_SERVICE_NAME
-          value: phoenix-rabbitmq-headless
+          value: rabbitmq-headless
         - name: K8S_ADDRESS_TYPE
           value: hostname
         - name: RABBITMQ_FORCE_BOOT
@@ -1508,23 +1506,23 @@ spec:
           valueFrom:
             secretKeyRef:
               key: rabbitmq-erlang-cookie
-              name: phoenix-rabbitmq
+              name: rabbitmq
         - name: RABBITMQ_LOAD_DEFINITIONS
           value: "no"
-        - name: RABBITMQ_DEFINITIONS_FILE
-          value: /app/load_definition.json
         - name: RABBITMQ_SECURE_PASSWORD
           value: "yes"
         - name: RABBITMQ_USERNAME
-          value: user
+          value: phoenix
         - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               key: rabbitmq-password
-              name: phoenix-rabbitmq
+              name: rabbitmq
         - name: RABBITMQ_PLUGINS
           value: rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap
-        image: docker.io/bitnami/rabbitmq:3.9.14-debian-10-r12
+        - name: RABBITMQ_DEFINITIONS_FILE
+          value: /app/load_definition.json
+        image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
         imagePullPolicy: IfNotPresent
         lifecycle:
           preStop:
@@ -1578,24 +1576,26 @@ spec:
           name: configuration
         - mountPath: /bitnami/rabbitmq/mnesia
           name: data
+      imagePullSecrets:
+      - name: ase-ecr-credentials
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
-      serviceAccountName: phoenix-rabbitmq
+      serviceAccountName: rabbitmq
       terminationGracePeriodSeconds: 120
       volumes:
       - configMap:
           items:
           - key: rabbitmq.conf
             path: rabbitmq.conf
-          name: phoenix-rabbitmq-config
+          name: rabbitmq-config
         name: configuration
   updateStrategy:
     type: RollingUpdate
   volumeClaimTemplates:
   - metadata:
       labels:
-        app.kubernetes.io/instance: phoenix-rabbitmq
+        app.kubernetes.io/instance: stage
         app.kubernetes.io/name: rabbitmq
       name: data
     spec:
@@ -1603,4 +1603,5 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 8Gi
+          storage: 10Gi
+      storageClassName: ase-node-local
