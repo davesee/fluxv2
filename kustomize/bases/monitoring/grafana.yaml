@@ -124,7 +124,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "ZGk5RGFlODhSZ3Z2cnVlSXE2NHJXWENxSzFyVUlVTjBLd0JONHBJOA=="
+  admin-password: "V05zU1BpMW9CYVpuZmF4Y2ZwUFVYUGRuRG1SNGFmWnowTVlnMkc4Ng=="
   ldap-toml: ""
 ---
 # Source: grafana/templates/configmap.yaml
@@ -339,7 +339,7 @@ spec:
         checksum/config: 65b172d461a3f1ce10fec656ce903a8d103cccf5928159fc3c9fbfa5e90f45cb
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: bb723cde605d6b339e2c8964070d07def908b7957e9ff17d122d59bdc45920bf
+        checksum/secret: 0ded8ffb44c1eaa5db102fa42aa1ea3987fb4f28c2e00338242b13e3714f3fdd
     spec:
       
       serviceAccountName: grafana

@@ -1,12 +1,12 @@
 bases:
-  #  - patches/namespace.yaml
+  #   - patches/namespace.yaml
   - ../../bases
 
-namespace: phoenix-stage
+namespace: phoenix-stge
 # namePrefix: phoenix-
 
-generatorOptions:
-  disableNameSuffixHash: true
+# generatorOptions:
+#   disableNameSuffixHash: true
 
 # Affect images across all deployments
 # images:

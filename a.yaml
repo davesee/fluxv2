@@ -3,12 +3,12 @@ automountServiceAccountToken: true
 kind: ServiceAccount
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq
-  namespace: phoenix-stage
+    helm.sh/chart: rabbitmq-8.24.2
+  name: rabbitmq
+  namespace: phoenix-stge
 secrets:
 - name: rabbitmq
 ---
@@ -16,12 +16,12 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq-endpoint-reader
-  namespace: phoenix-stage
+    helm.sh/chart: rabbitmq-8.24.2
+  name: rabbitmq-endpoint-reader
+  namespace: phoenix-stge
 rules:
 - apiGroups:
   - ""
@@ -40,27 +40,27 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq-endpoint-reader
-  namespace: phoenix-stage
+    helm.sh/chart: rabbitmq-8.24.2
+  name: rabbitmq-endpoint-reader
+  namespace: phoenix-stge
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
-  name: phoenix-rabbitmq-endpoint-reader
+  name: rabbitmq-endpoint-reader
 subjects:
 - kind: ServiceAccount
-  name: phoenix-rabbitmq
-  namespace: phoenix-stage
+  name: rabbitmq
+  namespace: phoenix-stge
 ---
 apiVersion: v1
 data:
   rabbitmq.conf: |-
     ## Username and password
     ##
-    default_user = phoenix
+    default_user = user
     default_pass = CHANGEME
     ## Clustering
     ##
@@ -73,18 +73,18 @@ data:
     queue_master_locator = min-masters
     # enable guest user
     loopback_users.guest = false
-    #default_vhost = phoenix-stage-vhost
+    #default_vhost = patchme-vhost
     #disk_free_limit.absolute = 50MB
     #load_definitions = /app/load_definition.json
 kind: ConfigMap
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq-config
-  namespace: phoenix-stage
+    helm.sh/chart: rabbitmq-8.24.2
+  name: rabbitmq-config
+  namespace: phoenix-stge
 ---
 apiVersion: v1
 data:
@@ -94,35 +94,35 @@ data:
   edgesql-username: c2E=
 kind: Secret
 metadata:
-  name: phoenix-edgesql-secret
-  namespace: phoenix-stage
+  name: edgesql-secret-h9t47c48k5
+  namespace: phoenix-stge
 type: Opaque
 ---
 apiVersion: v1
 data:
-  rabbitmq-erlang-cookie: cDRlS05TNFdjOHFneU5oSzRJazJYT0hjdjJGT1NkcmQ=
-  rabbitmq-password: dm11VGFYalg1UU1RVFQ9PQ==
+  rabbitmq-erlang-cookie: YjlMd0ZzMnZtdm9PU0RWWVlXTExGeDNzUVEzaGhMV04=
+  rabbitmq-password: d0dYYmtCeTJoUg==
 kind: Secret
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq
-  namespace: phoenix-stage
+    helm.sh/chart: rabbitmq-8.24.2
+  name: rabbitmq
+  namespace: phoenix-stge
 type: Opaque
 ---
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq
-  namespace: phoenix-stage
+    helm.sh/chart: rabbitmq-8.24.2
+  name: rabbitmq
+  namespace: phoenix-stge
 spec:
   ports:
   - name: amqp
@@ -142,7 +142,7 @@ spec:
     port: 15672
     targetPort: stats
   selector:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/name: rabbitmq
   type: ClusterIP
 ---
@@ -150,12 +150,12 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq-headless
-  namespace: phoenix-stage
+    helm.sh/chart: rabbitmq-8.24.2
+  name: rabbitmq-headless
+  namespace: phoenix-stge
 spec:
   clusterIP: None
   ports:
@@ -171,9 +171,8 @@ spec:
   - name: http-stats
     port: 15672
     targetPort: stats
-  publishNotReadyAddresses: true
   selector:
-    app.kubernetes.io/instance: stage
+    app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/name: rabbitmq
 ---
 apiVersion: apps/v1
@@ -184,8 +183,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
-  name: phoenix-rabbitmq
-  namespace: phoenix-stage
+  name: rabbitmq
+  namespace: phoenix-stge
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1
@@ -193,7 +192,7 @@ spec:
     matchLabels:
       app.kubernetes.io/instance: stage
       app.kubernetes.io/name: rabbitmq
-  serviceName: phoenix-rabbitmq-headless
+  serviceName: rabbitmq-headless
   template:
     metadata:
       annotations:
@@ -257,7 +256,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: rabbitmq-erlang-cookie
-              name: phoenix-rabbitmq
+              name: rabbitmq
         - name: RABBITMQ_LOAD_DEFINITIONS
           value: "no"
         - name: RABBITMQ_SECURE_PASSWORD
@@ -268,7 +267,7 @@ spec:
           valueFrom:
             secretKeyRef:
               key: rabbitmq-password
-              name: phoenix-rabbitmq
+              name: rabbitmq
         - name: RABBITMQ_PLUGINS
           value: rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap
         image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
@@ -330,14 +329,14 @@ spec:
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
-      serviceAccountName: phoenix-rabbitmq
+      serviceAccountName: rabbitmq
       terminationGracePeriodSeconds: 120
       volumes:
       - configMap:
           items:
           - key: rabbitmq.conf
             path: rabbitmq.conf
-          name: phoenix-rabbitmq-config
+          name: rabbitmq-config
         name: configuration
   updateStrategy:
     type: RollingUpdate
@@ -352,5 +351,5 @@ spec:
       - ReadWriteOnce
       resources:
         requests:
-          storage: 8Gi
+          storage: 10Gi
       storageClassName: ase-node-local

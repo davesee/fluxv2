@@ -1,26 +1,26 @@
-# ---
+---
 # Source: edgesql/templates/secret.yaml
-# apiVersion: apps/v1
-# kind: Secret
-# metadata:
-#   name: edgesql-secret
-#   namespace: patchme
-#   labels:
-#     namespace: patchme
-#     helm.sh/chart: edgesql-0.1.0
-#     app.kubernetes.io/name: edgesql
-#     app.kubernetes.io/instance: edgesql
-#     app.kubernetes.io/version: "1.16.0"
-#     app.kubernetes.io/managed-by: Helm
-# type: Opaque
-# stringData:
-#   SA_PASSWORD: vmuTaXjX5QMQTT==
-#   edgesql-password: vmuTaXjX5QMQTT==
-#   edgesql-username: sa
-#   edgesql-hostname: edgesql-service
+apiVersion: v1
+kind: Secret
+metadata:
+  name: edgesql-secret
+  namespace: patchme
+  labels:
+    namespace: patchme
+    helm.sh/chart: edgesql-0.1.0
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+type: Opaque
+stringData:
+  SA_PASSWORD: vmuTaXjX5QMQTT==
+  edgesql-password: vmuTaXjX5QMQTT==
+  edgesql-username: sa
+  edgesql-hostname: edgesql-service
 ---
 # Source: edgesql/templates/pvc.yaml
-apiVersion: apps/v1
+apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: edgesql-pvc
@@ -90,7 +90,7 @@ spec:
         app.kubernetes.io/instance: edgesql
     spec:
       imagePullSecrets:
-        - name: ase-ecr-credentials
+      - name: ase-ecr-credentials
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
