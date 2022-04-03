@@ -27,8 +27,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "eFNCZERqOW5JWA=="
-  rabbitmq-erlang-cookie: "cEQ1TTFLeUZ3UjJ5bU50YXcxbDg1UHVxdWFnQnVrU1M="
+  rabbitmq-password: "SXJ0YWl2d0NVbg=="
+  rabbitmq-erlang-cookie: "N3N0aHZFNTRDN2F4ZGVjSkdNWnVMREwxbVB3czZoYjc="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -142,24 +142,21 @@ metadata:
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
-  type: ClusterIP
+  type: LoadBalancer
+  externalTrafficPolicy: "Cluster"
   ports:
     - name: amqp
       port: 5672
       targetPort: amqp
-      nodePort: null
     - name: epmd
       port: 4369
       targetPort: epmd
-      nodePort: null
     - name: dist
       port: 25672
       targetPort: dist
-      nodePort: null
     - name: http-stats
       port: 15672
       targetPort: stats
-      nodePort: null
   selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
@@ -194,7 +191,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
-        checksum/secret: 64363cfecd5aedbf9306a3033975ad6f95709e452c4de73497fc1c980d9bb83b
+        checksum/secret: 0b3fb861ce656f5636732895b1ca958ae192e3415899d504e588a338c580a90f
     spec:
       
       serviceAccountName: phoenix-rabbitmq

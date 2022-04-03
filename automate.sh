@@ -7,14 +7,16 @@ export prefix="phoenix"
 
 main() {
     # create public chart yamls
-    import_source infra rabbitmq https://charts.bitnami.com/bitnami bitnami/rabbitmq
+    import_source infra rabbitmq https://charts.bitnami.com/bitnami bitnami/rabbitmq \
+        "service.type=LoadBalancer"
     import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana \
         "testFramework.enabled=false,service.type=LoadBalancer"
     import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus \
-        "nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false"
+        "nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false,service.type=LoadBalancer"
 
     # create custom chart yamls
-    helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="edgesql" --namespace patchme --set "sqldb.fullnameOverride=$prefix-edgesql" >./kustomize/bases/infra/edgesql.yaml
+    helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="edgesql" --namespace patchme \
+        --set "sqldb.fullnameOverride=$prefix-edgesql" >./kustomize/bases/infra/edgesql.yaml
 }
 
 import_source() {
