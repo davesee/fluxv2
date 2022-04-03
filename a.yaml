@@ -8,7 +8,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 secrets:
 - name: rabbitmq
 ---
@@ -21,7 +21,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-endpoint-reader
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 rules:
 - apiGroups:
   - ""
@@ -45,7 +45,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-endpoint-reader
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -53,7 +53,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: rabbitmq
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 ---
 apiVersion: v1
 data:
@@ -84,18 +84,25 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-config
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 ---
 apiVersion: v1
-data:
-  SA_PASSWORD: dm11VGFYalg1UU1RVFQ9PQ==
-  edgesql-hostname: ZWRnZXNxbC1zZXJ2aWNl
-  edgesql-password: dm11VGFYalg1UU1RVFQ9PQ==
-  edgesql-username: c2E=
 kind: Secret
 metadata:
-  name: edgesql-secret-h9t47c48k5
-  namespace: phoenix-stge
+  labels:
+    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: edgesql-0.1.0
+    namespace: patchme
+  name: edgesql-secret
+  namespace: phoenix-stage
+stringData:
+  SA_PASSWORD: vmuTaXjX5QMQTT==
+  edgesql-hostname: edgesql-service
+  edgesql-password: vmuTaXjX5QMQTT==
+  edgesql-username: sa
 type: Opaque
 ---
 apiVersion: v1
@@ -110,8 +117,31 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: edgesql-0.1.0
+    namespace: patchme
+  name: edgesql-service
+  namespace: phoenix-stage
+spec:
+  ports:
+  - name: sql
+    port: 1433
+    protocol: TCP
+    targetPort: 1433
+  selector:
+    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/name: edgesql
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: Service
@@ -122,7 +152,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 spec:
   ports:
   - name: amqp
@@ -155,7 +185,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.24.2
   name: rabbitmq-headless
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 spec:
   clusterIP: None
   ports:
@@ -175,6 +205,94 @@ spec:
     app.kubernetes.io/instance: rabbitmq
     app.kubernetes.io/name: rabbitmq
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: edgesql-0.1.0
+    namespace: patchme
+  name: edgesql-pvc
+  namespace: phoenix-stage
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: ase-node-local
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: edgesql
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: edgesql
+    app.kubernetes.io/version: 1.16.0
+    helm.sh/chart: edgesql-0.1.0
+    namespace: patchme
+  name: edgesql
+  namespace: phoenix-stage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: edgesql
+      app.kubernetes.io/name: edgesql
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: edgesql
+        app.kubernetes.io/name: edgesql
+    spec:
+      containers:
+      - env:
+        - name: MSSQL_PID
+          value: Developer
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: SA_PASSWORD
+              name: edgesql-secret
+        - name: MSSQL_AGENT_ENABLED
+          value: "TRUE"
+        - name: MSSQL_COLLATION
+          value: SQL_Latin1_General_CP1_CI_AS
+        - name: MSSQL_LCID
+          value: "1033"
+        image: ecr.ase-usgva-p21.missionready.local:31001/mcr.microsoft.com/azure-sql-edge:1.0.5
+        imagePullPolicy: IfNotPresent
+        name: edgesql
+        ports:
+        - containerPort: 1433
+          name: http
+          protocol: TCP
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 10Gi
+          requests:
+            cpu: 125m
+            memory: 64Mi
+        volumeMounts:
+        - mountPath: /var/opt/mssql
+          name: sqldata
+      imagePullSecrets:
+      - name: ase-ecr-credentials
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      volumes:
+      - name: sqldata
+        persistentVolumeClaim:
+          claimName: edgesql-pvc
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -184,7 +302,7 @@ metadata:
     app.kubernetes.io/name: rabbitmq
     helm.sh/chart: rabbitmq-8.29.3
   name: rabbitmq
-  namespace: phoenix-stge
+  namespace: phoenix-stage
 spec:
   podManagementPolicy: OrderedReady
   replicas: 1

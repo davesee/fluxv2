@@ -21,10 +21,10 @@ patches:
       version: v1
       kind: StatefulSet
       name: rabbitmq
-secretGenerator:
-  - name: edgesql-secret
-    envs:
-      - patches/edgesql.env
+# secretGenerator:
+#   - name: edgesql-secret
+#     envs:
+#       - patches/edgesql.env
 # - target:
 #     kind: Secret
 #     name: edgesql-secret
