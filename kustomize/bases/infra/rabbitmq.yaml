@@ -27,8 +27,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "aU00NWFiSDlJNg=="
-  rabbitmq-erlang-cookie: "dlF5aFQ2M0lnRFhGQXBLbnllMTFtOFNyWXQ3QWozZ2w="
+  rabbitmq-password: "YkhtblRmVFlzYg=="
+  rabbitmq-erlang-cookie: "NXZ5MENhWkVGYmNPU3lMdzE4VlI2QzVraVhTaGd4NTU="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -125,7 +125,7 @@ spec:
     - name: http-stats
       port: 15672
       targetPort: stats
-  selector:
+  selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
   publishNotReadyAddresses: true
@@ -160,7 +160,7 @@ spec:
       port: 15672
       targetPort: stats
       nodePort: null
-  selector:
+  selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
 ---
@@ -194,12 +194,13 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
-        checksum/secret: bf2c970eb87a80bcdf9f3739a3123e77715c35bc275fc94e66f4bf0cdb1009d6
+        checksum/secret: 6473cd238f554d150ef795ca3c6aed9e4e5ad4214a0ed6798d0dadc8b7daa946
     spec:
+      
       serviceAccountName: phoenix-rabbitmq
       affinity:
         podAffinity:
-
+          
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -212,7 +213,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-
+          
       securityContext:
         fsGroup: 1001
         runAsUser: 1001

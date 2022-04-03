@@ -78,7 +78,7 @@ metadata:
 type: Opaque
 data:
   admin-user: "YWRtaW4="
-  admin-password: "eGphMHlMckpibFpNMmkyZTFjTTNFMnduRndmYk9YNVUyc0JkbFRwVg=="
+  admin-password: "VDhvZk9iZ2k3Rk1IZDNNVWo3WE5oNEJNNG96RHVrdlhpbGJtajN6Mg=="
   ldap-toml: ""
 ---
 # Source: grafana/templates/configmap.yaml
@@ -233,7 +233,7 @@ spec:
         checksum/config: 29e71bec037ea0eece29019cc49b2213e556bb33c522152cc20715200c468f23
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: b8c4cfe97af8748ff330df3dbcaedfd88994c6d6b734a107399b2e50a61aa8fb
+        checksum/secret: a69df1712166d132883ab27fbdae384ee0bb68b4184c620ff4fab4e7ab729508
     spec:
       
       serviceAccountName: phoenix-grafana
