@@ -15,7 +15,7 @@ images:
     newTag: 3.9.13-debian-10-r38
 
 patches:
-  - path: patches/rabbitmq_StatefulSet.yaml
+  - path: patches/rabbitmq.yaml
     target:
       group: apps
       version: v1
