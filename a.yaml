@@ -835,7 +835,7 @@ data:
   rabbitmq.conf: |-
     ## Username and password
     ##
-    default_user = user
+    default_user = phoenix
     default_pass = CHANGEME
     ## Clustering
     ##
@@ -850,6 +850,9 @@ data:
     loopback_users.guest = false
     #default_vhost = patchme-vhost
     #disk_free_limit.absolute = 50MB
+    ## Prometheus metrics
+    ##
+    prometheus.tcp.port = 9419
 kind: ConfigMap
 metadata:
   labels:
@@ -881,7 +884,7 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  admin-password: ZmxOZlVnWDNBa3cyT1V1QnM1S21ZdU1Cc0pKckd5Zm05VUF1UlV4Ng==
+  admin-password: d2ZmMzlQYnlKem9Rb3k2cnBBeVU1RWg4ekdOWWo5RDNpbW9oaG5Hcg==
   admin-user: YWRtaW4=
   ldap-toml: ""
 kind: Secret
@@ -898,8 +901,8 @@ type: Opaque
 ---
 apiVersion: v1
 data:
-  rabbitmq-erlang-cookie: N3N0aHZFNTRDN2F4ZGVjSkdNWnVMREwxbVB3czZoYjc=
-  rabbitmq-password: SXJ0YWl2d0NVbg==
+  rabbitmq-erlang-cookie: ZmdEdDFUcnBTT1d1amU2RXNncGI4WmtrNUljYnJpZWo=
+  rabbitmq-password: dm11VGFYalg1UU1RVHk9PQ==
 kind: Secret
 metadata:
   labels:
@@ -1031,6 +1034,9 @@ spec:
   - name: http-stats
     port: 15672
     targetPort: stats
+  - name: metrics
+    port: 9419
+    targetPort: metrics
   selector:
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/name: rabbitmq
@@ -1199,7 +1205,7 @@ spec:
         checksum/config: 29e71bec037ea0eece29019cc49b2213e556bb33c522152cc20715200c468f23
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 2ab211267e2239d157345e33b188cd51b7aae2739f49a3680644a4d30c5e9d06
+        checksum/secret: 75d614e51c50c3eecb0550467e9fd862deda0862e3a5a875274fd571abb2cd84
       labels:
         app.kubernetes.io/instance: phoenix-grafana
         app.kubernetes.io/name: grafana
@@ -1443,8 +1449,10 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 6e0af33f9e71324753d96f7066b41b7ea7215c1fd1ba15f0683d18e78e4cf712
-        checksum/secret: 0b3fb861ce656f5636732895b1ca958ae192e3415899d504e588a338c580a90f
+        checksum/config: 18f6ca53bdb4327b3edc1689e42573df93b8339048e8fc7ebb31c7cfacf8ff5d
+        checksum/secret: 1321f49c83e5355cd4ded45af24302112c787bae955aab9e1c36aa5e6b27b242
+        prometheus.io/port: "9419"
+        prometheus.io/scrape: "true"
       labels:
         app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm
@@ -1511,14 +1519,15 @@ spec:
         - name: RABBITMQ_SECURE_PASSWORD
           value: "yes"
         - name: RABBITMQ_USERNAME
-          value: user
+          value: phoenix
         - name: RABBITMQ_PASSWORD
           valueFrom:
             secretKeyRef:
               key: rabbitmq-password
               name: phoenix-rabbitmq
         - name: RABBITMQ_PLUGINS
-          value: rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap
+          value: rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap,
+            rabbitmq_prometheus
         image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.13-debian-10-r38
         imagePullPolicy: IfNotPresent
         lifecycle:
@@ -1554,6 +1563,8 @@ spec:
           name: stats
         - containerPort: 4369
           name: epmd
+        - containerPort: 9419
+          name: metrics
         readinessProbe:
           exec:
             command:

@@ -27,8 +27,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "dm11VGFYalg1UU1RVDFAfg=="
-  rabbitmq-erlang-cookie: "UnBQZzNZSU5KbDZUaUxtTlhRZmFmUzlscTNsdWNnRFc="
+  rabbitmq-password: "dm11VGFYalg1UU1RVHk9PQ=="
+  rabbitmq-erlang-cookie: "ZmdEdDFUcnBTT1d1amU2RXNncGI4WmtrNUljYnJpZWo="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -60,6 +60,9 @@ data:
     loopback_users.guest = false
     #default_vhost = patchme-vhost
     #disk_free_limit.absolute = 50MB
+    ## Prometheus metrics
+    ##
+    prometheus.tcp.port = 9419
 ---
 # Source: rabbitmq/templates/role.yaml
 kind: Role
@@ -157,6 +160,9 @@ spec:
     - name: http-stats
       port: 15672
       targetPort: stats
+    - name: metrics
+      port: 9419
+      targetPort: metrics
   selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
@@ -190,8 +196,11 @@ spec:
         app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: 532afbb9fc19f451fc6f0c99ac20bf390e70943839230b5e51e0c1d54ba1e1e9
-        checksum/secret: 96b445c053753537867062c5bbfad130e2271792dd8f7af26e4fec0db38592e4
+        checksum/config: 18f6ca53bdb4327b3edc1689e42573df93b8339048e8fc7ebb31c7cfacf8ff5d
+        checksum/secret: 1321f49c83e5355cd4ded45af24302112c787bae955aab9e1c36aa5e6b27b242
+        
+        prometheus.io/port: '9419'
+        prometheus.io/scrape: "true"
     spec:
       
       serviceAccountName: phoenix-rabbitmq
@@ -273,7 +282,7 @@ spec:
                   name: phoenix-rabbitmq
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
-              value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap"
+              value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap, rabbitmq_prometheus"
           ports:
             - name: amqp
               containerPort: 5672
@@ -283,6 +292,8 @@ spec:
               containerPort: 15672
             - name: epmd
               containerPort: 4369
+            - name: metrics
+              containerPort: 9419
           livenessProbe:
             exec:
               command:
