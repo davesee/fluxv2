@@ -4,10 +4,10 @@ kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
   name: phoenix-rabbitmq
-  namespace: "patchme"
+  namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.22.2
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -18,27 +18,26 @@ spec:
   ingress:
     # Allow inbound connections
     - ports:
-        - port: 4369  # EPMD
+        - port: 4369 # EPMD
         - port: 5672
         - port: 5671
         - port: 25672
         - port: 15672
     # Allow prometheus scrapes
     - ports:
-        - port: 9419
+        - port: 15692
 ---
 # Source: rabbitmq/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: phoenix-rabbitmq
-  namespace: "patchme"
+  namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.22.2
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
-automountServiceAccountToken: true
 secrets:
   - name: phoenix-rabbitmq
 ---
@@ -47,33 +46,33 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: phoenix-rabbitmq
-  namespace: "patchme"
+  namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.22.2
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "dm11VGFYalg1UU1RVHk9PQ=="
-  rabbitmq-erlang-cookie: "aWZrSm9kUjk1cXV3bjBLY29jVFFjM0pURldEWFhhTFA="
+  rabbitmq-password: "dm11VGFYalg1UU1RVFQ9PQ=="
+  rabbitmq-erlang-cookie: "emhjRmpEUjFLeXY2R3VsdU5QS1hFMnM3NUJ0ZmdpcHM="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: phoenix-rabbitmq-config
-  namespace: "patchme"
+  namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.22.2
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 data:
   rabbitmq.conf: |-
     ## Username and password
     ##
-    default_user = phoenix
+    default_user = dreadmin
     default_pass = CHANGEME
     ## Clustering
     ##
@@ -86,59 +85,23 @@ data:
     queue_master_locator = min-masters
     # enable guest user
     loopback_users.guest = false
-    #default_vhost = patchme-vhost
+    #default_vhost = phoenix-stage-vhost
     #disk_free_limit.absolute = 50MB
+    #load_definitions = /app/load_definition.json
     ## Prometheus metrics
     ##
-    prometheus.tcp.port = 9419
----
-# Source: rabbitmq/templates/role.yaml
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: phoenix-rabbitmq-endpoint-reader
-  namespace: "patchme"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: phoenix-rabbitmq
-    app.kubernetes.io/managed-by: Helm
-rules:
-  - apiGroups: [""]
-    resources: ["endpoints"]
-    verbs: ["get"]
-  - apiGroups: [""]
-    resources: ["events"]
-    verbs: ["create"]
----
-# Source: rabbitmq/templates/rolebinding.yaml
-kind: RoleBinding
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: phoenix-rabbitmq-endpoint-reader
-  namespace: "patchme"
-  labels:
-    app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
-    app.kubernetes.io/instance: phoenix-rabbitmq
-    app.kubernetes.io/managed-by: Helm
-subjects:
-  - kind: ServiceAccount
-    name: phoenix-rabbitmq
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: phoenix-rabbitmq-endpoint-reader
+    prometheus.tcp.port = 15692
+    prometheus.path = "/metrics"
 ---
 # Source: rabbitmq/templates/svc-headless.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: phoenix-rabbitmq-headless
-  namespace: "patchme"
+  namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.22.2
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -156,42 +119,45 @@ spec:
     - name: http-stats
       port: 15672
       targetPort: stats
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
-  publishNotReadyAddresses: true
 ---
 # Source: rabbitmq/templates/svc.yaml
 apiVersion: v1
 kind: Service
 metadata:
   name: phoenix-rabbitmq
-  namespace: "patchme"
+  namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.22.2
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
-  type: LoadBalancer
-  externalTrafficPolicy: "Cluster"
+  type: ClusterIP
   ports:
     - name: amqp
       port: 5672
       targetPort: amqp
+      nodePort: null
     - name: epmd
       port: 4369
       targetPort: epmd
+      nodePort: null
     - name: dist
       port: 25672
       targetPort: dist
+      nodePort: null
     - name: http-stats
       port: 15672
       targetPort: stats
+      nodePort: null
     - name: metrics
-      port: 9419
+      port: 15692
       targetPort: metrics
-  selector: 
+      nodePort: null
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
 ---
@@ -200,10 +166,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: phoenix-rabbitmq
-  namespace: "patchme"
+  namespace: "phoenix-stage"
   labels:
     app.kubernetes.io/name: rabbitmq
-    helm.sh/chart: rabbitmq-8.31.2
+    helm.sh/chart: rabbitmq-8.22.2
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -220,21 +186,23 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/name: rabbitmq
-        helm.sh/chart: rabbitmq-8.31.2
+        helm.sh/chart: rabbitmq-8.22.2
         app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: 18f6ca53bdb4327b3edc1689e42573df93b8339048e8fc7ebb31c7cfacf8ff5d
-        checksum/secret: 7dbbce1f84d7a0688d7897a36dc775187c95008d40f226102ef3fd394531c393
-        
-        prometheus.io/port: '9419'
+        checksum/config: 17622da36008bf78766d3b2099b8a57e6e41363c71132fa523c1fd5d2aac7d92
+        checksum/secret: fcf86b6c5555573dfd194951839b25b151d9fd4fead039ba26b27f8ee81dbbe5
+
+        prometheus.io/path: /metrics
+        prometheus.io/port: "15692"
         prometheus.io/scrape: "true"
     spec:
-      
+      imagePullSecrets:
+        - name: acr-secret
       serviceAccountName: phoenix-rabbitmq
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -243,18 +211,18 @@ spec:
                     app.kubernetes.io/name: rabbitmq
                     app.kubernetes.io/instance: phoenix-rabbitmq
                 namespaces:
-                  - "patchme"
+                  - "phoenix-stage"
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
       terminationGracePeriodSeconds: 120
       containers:
         - name: rabbitmq
-          image: docker.io/bitnami/rabbitmq:3.9.14-debian-10-r12
+          image: ecr.ase-usgva-p21.missionready.local:31001/bitnami/rabbitmq:3.9.5-management
           imagePullPolicy: "IfNotPresent"
           env:
             - name: BITNAMI_DEBUG
@@ -298,19 +266,21 @@ spec:
                   key: rabbitmq-erlang-cookie
             - name: RABBITMQ_LOAD_DEFINITIONS
               value: "no"
-            - name: RABBITMQ_DEFINITIONS_FILE
-              value: "/app/load_definition.json"
             - name: RABBITMQ_SECURE_PASSWORD
               value: "yes"
             - name: RABBITMQ_USERNAME
-              value: "phoenix"
+              value: "dreadmin"
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: phoenix-rabbitmq
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
-              value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap, rabbitmq_prometheus"
+              value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_prometheus, rabbitmq_auth_backend_ldap, rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_prometheus"
+            - name: RABBITMQ_DEFAULT_USER
+              value: dreadmin
+            - name: RABBITMQ_DEFAULT_PASS
+              value: vmuTaXjX5QMQTT==
           ports:
             - name: amqp
               containerPort: 5672
@@ -382,4 +352,5 @@ spec:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: "8Gi"
+            storage: "1Gi"
+        storageClassName: ase-node-local
