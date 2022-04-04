@@ -640,7 +640,7 @@ spec:
     app: prometheus
     release: phoenix-prometheus
   sessionAffinity: None
-  type: "ClusterIP"
+  type: "LoadBalancer"
 ---
 # Source: prometheus/charts/kube-state-metrics/templates/deployment.yaml
 apiVersion: apps/v1

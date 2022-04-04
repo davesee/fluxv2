@@ -1,4 +1,32 @@
 ---
+# Source: rabbitmq/templates/networkpolicy.yaml
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: phoenix-rabbitmq
+  namespace: "patchme"
+  labels:
+    app.kubernetes.io/name: rabbitmq
+    helm.sh/chart: rabbitmq-8.31.2
+    app.kubernetes.io/instance: phoenix-rabbitmq
+    app.kubernetes.io/managed-by: Helm
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: rabbitmq
+      app.kubernetes.io/instance: phoenix-rabbitmq
+  ingress:
+    # Allow inbound connections
+    - ports:
+        - port: 4369  # EPMD
+        - port: 5672
+        - port: 5671
+        - port: 25672
+        - port: 15672
+    # Allow prometheus scrapes
+    - ports:
+        - port: 9419
+---
 # Source: rabbitmq/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -28,7 +56,7 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVHk9PQ=="
-  rabbitmq-erlang-cookie: "alc2NDlEdzYzTTloZXpCNHFUb0llT0Y0M2xueXBzY1M="
+  rabbitmq-erlang-cookie: "aWZrSm9kUjk1cXV3bjBLY29jVFFjM0pURldEWFhhTFA="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -46,7 +74,7 @@ data:
     ## Username and password
     ##
     default_user = phoenix
-    default_pass = vmuTaXjX5QMQTy==
+    default_pass = CHANGEME
     ## Clustering
     ##
     cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
@@ -56,8 +84,8 @@ data:
     cluster_partition_handling = autoheal
     # queue master locator
     queue_master_locator = min-masters
-    enable guest user
-    loopback_users.guest = true
+    # enable guest user
+    loopback_users.guest = false
     #default_vhost = patchme-vhost
     #disk_free_limit.absolute = 50MB
     ## Prometheus metrics
@@ -128,7 +156,7 @@ spec:
     - name: http-stats
       port: 15672
       targetPort: stats
-  selector:
+  selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
   publishNotReadyAddresses: true
@@ -163,7 +191,7 @@ spec:
     - name: metrics
       port: 9419
       targetPort: metrics
-  selector:
+  selector: 
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
 ---
@@ -197,15 +225,16 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: 18f6ca53bdb4327b3edc1689e42573df93b8339048e8fc7ebb31c7cfacf8ff5d
-        checksum/secret: f184f2ba21813cb6a61dda9877989429834e153e1ac31e18cd763a002352d421
-
-        prometheus.io/port: "9419"
+        checksum/secret: 7dbbce1f84d7a0688d7897a36dc775187c95008d40f226102ef3fd394531c393
+        
+        prometheus.io/port: '9419'
         prometheus.io/scrape: "true"
     spec:
+      
       serviceAccountName: phoenix-rabbitmq
       affinity:
         podAffinity:
-
+          
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -218,7 +247,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-
+          
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -282,10 +311,6 @@ spec:
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
               value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap, rabbitmq_prometheus"
-            - name: RABBITMQ_DEFAULT_USER
-              value: phoenix
-            - name: RABBITMQ_DEFAULT_PASS
-              value: vmuTaXjX5QMQTy==
           ports:
             - name: amqp
               containerPort: 5672

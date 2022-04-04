@@ -8,11 +8,11 @@ export prefix="phoenix"
 main() {
     # create public chart yamls
     import_source infra rabbitmq https://charts.bitnami.com/bitnami bitnami/rabbitmq \
-        "service.type=LoadBalancer,metrics.enabled=true,auth.username=phoenix,auth.password=vmuTaXjX5QMQTy==,extraEnvVars[0].name=RABBITMQ_DEFAULT_USER,extraEnvVars[0].value=phoenix,extraEnvVars[1].name=RABBITMQ_DEFAULT_PASS,extraEnvVars[1].value=vmuTaXjX5QMQTy=="
+        "service.type=LoadBalancer,metrics.enabled=true,networkPolicy.enabled=true,auth.username=phoenix,auth.password=vmuTaXjX5QMQTy=="
     import_source monitoring grafana https://grafana.github.io/helm-charts grafana/grafana \
         "service.type=LoadBalancer,testFramework.enabled=false,image.pullSecrets[0]=ase-ecr-credentials"
     import_source monitoring prometheus https://prometheus-community.github.io/helm-charts prometheus-community/prometheus \
-        "service.type=LoadBalancer,nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false,imagePullSecrets[0].name=ase-ecr-credentials"
+        "server.service.type=LoadBalancer,nodeExporter.enabled=false,pushgateway.enabled=false,alertmanager.enabled=false,imagePullSecrets[0].name=ase-ecr-credentials"
 
     # create custom chart yamls
     helm template -f ./sources/edgesql/values.yaml ./sources/edgesql --name-template="edgesql" --namespace patchme \
