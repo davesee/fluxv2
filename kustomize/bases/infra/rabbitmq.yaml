@@ -198,11 +198,9 @@ spec:
         prometheus.io/scrape: "true"
     spec:
       imagePullSecrets:
-        - name: acr-secret
+        - name: ase-ecr-credentials
       serviceAccountName: phoenix-rabbitmq
       affinity:
-        podAffinity:
-
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -214,8 +212,6 @@ spec:
                   - "phoenix-stage"
                 topologyKey: kubernetes.io/hostname
               weight: 1
-        nodeAffinity:
-
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
@@ -352,5 +348,5 @@ spec:
           - "ReadWriteOnce"
         resources:
           requests:
-            storage: "1Gi"
+            storage: "5Gi"
         storageClassName: ase-node-local
