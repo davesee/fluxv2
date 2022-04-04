@@ -27,8 +27,8 @@ metadata:
     app.kubernetes.io/managed-by: Helm
 type: Opaque
 data:
-  rabbitmq-password: "NFdPUTNoYWJxRg=="
-  rabbitmq-erlang-cookie: "OUlkNzA3VVkxWlFUempOc3h6UnRBVDdTRkFkalRNNUU="
+  rabbitmq-password: "dm11VGFYalg1UU1RVHk9PQ=="
+  rabbitmq-erlang-cookie: "alc2NDlEdzYzTTloZXpCNHFUb0llT0Y0M2xueXBzY1M="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -45,7 +45,7 @@ data:
   rabbitmq.conf: |-
     ## Username and password
     ##
-    default_user = user
+    default_user = phoenix
     default_pass = CHANGEME
     ## Clustering
     ##
@@ -196,8 +196,8 @@ spec:
         app.kubernetes.io/instance: phoenix-rabbitmq
         app.kubernetes.io/managed-by: Helm
       annotations:
-        checksum/config: afacbcb1faff90c28409e81371cfd2ddaa4ad868b85fa7e0e434737dc5be4d2c
-        checksum/secret: 323d6ba8e31ccc4ccda2198c5422039ea8214ca8046ee2056dcfbe075b5c16e5
+        checksum/config: 18f6ca53bdb4327b3edc1689e42573df93b8339048e8fc7ebb31c7cfacf8ff5d
+        checksum/secret: f184f2ba21813cb6a61dda9877989429834e153e1ac31e18cd763a002352d421
         
         prometheus.io/port: '9419'
         prometheus.io/scrape: "true"
@@ -275,7 +275,7 @@ spec:
             - name: RABBITMQ_SECURE_PASSWORD
               value: "yes"
             - name: RABBITMQ_USERNAME
-              value: "user"
+              value: "phoenix"
             - name: RABBITMQ_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -283,6 +283,10 @@ spec:
                   key: rabbitmq-password
             - name: RABBITMQ_PLUGINS
               value: "rabbitmq_management, rabbitmq_peer_discovery_k8s, rabbitmq_auth_backend_ldap, rabbitmq_prometheus"
+            - name: RABBITMQ_DEFAULT_USER
+              value: phoenix
+            - name: RABBITMQ_DEFAULT_PASS
+              value: vmuTaXjX5QMQTy==
           ports:
             - name: amqp
               containerPort: 5672
