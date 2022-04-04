@@ -5,16 +5,16 @@ bases:
 namespace: phoenix-stage
 
 # Affect images across all deployments, does not add ase-ecr-credentials!
-# images:
-#   - name: docker.io/bitnami/rabbitmq
-#     newName: ecr.ase-usgva-p21.missionready.local:31001/ironbank/pivotal/rabbitmq/rabbitmq38-management
-#     newTag: "3.8.28"
-#   - name: grafana/grafana
-#     newName: ecr.ase-usgva-p21.missionready.local:31001/ironbank/opensource/grafana/grafana
-#     newTag: "8.4.4"
-#   - name: quay.io/prometheus/prometheus
-#     newName: ecr.ase-usgva-p21.missionready.local:31001/ironbank/opensource/prometheus/prometheus
-#     newTag: "2.34.0"
+images:
+  - name: docker.io/bitnami/rabbitmq
+    newName: ecr.ase-usgva-p21.missionready.local:31001/ironbank/pivotal/rabbitmq/rabbitmq38-management
+    newTag: "3.8.28"
+  - name: grafana/grafana
+    newName: ecr.ase-usgva-p21.missionready.local:31001/ironbank/opensource/grafana/grafana
+    newTag: "8.4.4"
+  - name: quay.io/prometheus/prometheus
+    newName: ecr.ase-usgva-p21.missionready.local:31001/ironbank/opensource/prometheus/prometheus
+    newTag: "2.34.0"
 
 patches:
   - path: patches/rabbitmq_stateful_set.yaml
