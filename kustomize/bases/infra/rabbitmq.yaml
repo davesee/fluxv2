@@ -46,7 +46,7 @@ data:
     ## Username and password
     ##
     default_user = phoenix
-    default_pass = CHANGEME
+    default_pass = vmuTaXjX5QMQTy==
     ## Clustering
     ##
     cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
@@ -128,7 +128,7 @@ spec:
     - name: http-stats
       port: 15672
       targetPort: stats
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
   publishNotReadyAddresses: true
@@ -163,7 +163,7 @@ spec:
     - name: metrics
       port: 9419
       targetPort: metrics
-  selector: 
+  selector:
     app.kubernetes.io/name: rabbitmq
     app.kubernetes.io/instance: phoenix-rabbitmq
 ---
@@ -198,15 +198,14 @@ spec:
       annotations:
         checksum/config: 18f6ca53bdb4327b3edc1689e42573df93b8339048e8fc7ebb31c7cfacf8ff5d
         checksum/secret: f184f2ba21813cb6a61dda9877989429834e153e1ac31e18cd763a002352d421
-        
-        prometheus.io/port: '9419'
+
+        prometheus.io/port: "9419"
         prometheus.io/scrape: "true"
     spec:
-      
       serviceAccountName: phoenix-rabbitmq
       affinity:
         podAffinity:
-          
+
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
             - podAffinityTerm:
@@ -219,7 +218,7 @@ spec:
                 topologyKey: kubernetes.io/hostname
               weight: 1
         nodeAffinity:
-          
+
       securityContext:
         fsGroup: 1001
         runAsUser: 1001
