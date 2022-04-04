@@ -56,7 +56,7 @@ metadata:
 type: Opaque
 data:
   rabbitmq-password: "dm11VGFYalg1UU1RVHk9PQ=="
-  rabbitmq-erlang-cookie: "NmxRcUdJOGJHeVZCdFVIejVmazN3WGRJVDFEV0c1WFE="
+  rabbitmq-erlang-cookie: "ZVhna1BJckhWQ1V3MUY5dm5DNE5FQXF5Zkx5QnFtUUE="
 ---
 # Source: rabbitmq/templates/configuration.yaml
 apiVersion: v1
@@ -225,7 +225,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
       annotations:
         checksum/config: 18f6ca53bdb4327b3edc1689e42573df93b8339048e8fc7ebb31c7cfacf8ff5d
-        checksum/secret: f11ecf46740f89c7506c1dce5ef50970f198a7227170a681c41ac3d1c0ffcf0b
+        checksum/secret: 96d86a0544834c963764801d17a5d1aecf094ccd90826de14f12213770c0d318
         
         prometheus.io/port: '9419'
         prometheus.io/scrape: "true"
