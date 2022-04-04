@@ -17,9 +17,9 @@ images:
     newTag: "2.34.0"
 
 patches:
-  # - path: patches/rabbitmq_stateful_set.yaml
-  #   target:
-  #     kind: StatefulSet
+  - path: patches/rabbitmq_stateful_set.yaml
+    target:
+      kind: StatefulSet
   - path: patches/grafana_deployment.yaml
     target:
       kind: Deployment
