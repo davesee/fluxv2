@@ -56,8 +56,8 @@ data:
     cluster_partition_handling = autoheal
     # queue master locator
     queue_master_locator = min-masters
-    # enable guest user
-    loopback_users.guest = false
+    enable guest user
+    loopback_users.guest = true
     #default_vhost = patchme-vhost
     #disk_free_limit.absolute = 50MB
     ## Prometheus metrics
