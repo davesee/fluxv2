@@ -135,7 +135,7 @@ metadata:
     app.kubernetes.io/instance: phoenix-rabbitmq
     app.kubernetes.io/managed-by: Helm
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - name: amqp
       port: 5672
