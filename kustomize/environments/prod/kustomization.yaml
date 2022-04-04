@@ -19,8 +19,6 @@ images:
 patches:
   - path: patches/rabbitmq_stateful_set.yaml
     target:
-      group: apps
-      version: v1
       kind: StatefulSet
   - path: patches/grafana_deployment.yaml
     target:
